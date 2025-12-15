@@ -32,13 +32,32 @@ class TiresItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(sizeAndBrand, style: theme.titleLarge),
-                  Text('Quantity $quantity', style: theme.displayMedium),
-                  Text(inStock?'In Stock':'Out of Stock', style: inStock?theme.displayMedium:theme.displayMedium!.copyWith(color: Colors.red)),
+                  Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: inStock ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      inStock ? '$quantity In Stock' : 'Out of Stock',
+                      style: inStock
+                          ? theme.displayMedium!.copyWith(color: Colors.white)
+                          : theme.displayMedium!.copyWith(color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
+              ///The Price section
               Row(
                 children: [
-                  Text('Cost: $cost', style: theme.titleMedium),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Cost', style: theme.titleMedium),
+                      Text(cost.toString(), style: theme.titleMedium),
+                    ],
+                  ),
+                  SizedBox(width: 2.0,),
                   Icon(Icons.arrow_forward_ios, color: Colors.grey),
                 ],
               ),
