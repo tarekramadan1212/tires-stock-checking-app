@@ -12,7 +12,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final appCubit = BlocProvider.of<AppCubit>(context);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        toolbarHeight: 88,
+        title: Text('Supreme Check Pro'),
+      ),
       bottomNavigationBar: BlocBuilder<AppCubit, AppStates>(
         builder: (context, state){
           return BottomNavigationBar(
@@ -35,7 +38,13 @@ class HomePage extends StatelessWidget {
           );
         },
       ),
-      body: SafeArea(child: TiresStockScreen()),
+      body: SafeArea(
+          child: BlocBuilder<AppCubit, AppStates>(
+              builder:(context, state){
+                return  appCubit.screens[appCubit.currentIndex];
+              }
+          )
+      ),
     );
   }
 }
