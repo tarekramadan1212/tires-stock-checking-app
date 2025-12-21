@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supreme/core/utilities/waiting_customer_status.dart';
-import '../constants/app_colors.dart';
+import 'package:supreme/core/utilities/constants/app_colors.dart';
 
 class CustomWaitingListItem extends StatelessWidget {
   const CustomWaitingListItem({

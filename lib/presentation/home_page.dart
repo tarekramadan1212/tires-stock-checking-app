@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supreme/presentation/ui/tires_stock_screen.dart';
-
-import '../../core/app_cubit/app_cubit.dart';
-import '../../core/app_cubit/app_states.dart';
+import '../core/app_cubit/app_cubit.dart';
+import '../core/app_cubit/app_states.dart';
 import 'add_customer_screen.dart';
 
 class HomePage extends StatelessWidget {
