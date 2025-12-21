@@ -8,6 +8,7 @@ class AppCubit extends Cubit<AppStates>{
   AppCubit() : super(AppInitialState());
 
   List<Widget> screens = [TiresStockScreen(), WaitingListScreen()];
+  List<String> appBarTitles = ['Tires Stock', 'Waiting List'];
   int currentIndex = 0;
   void changeBottomNavItem(int index)
   {

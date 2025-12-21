@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supreme/core/widgets/custom_text_field.dart';
 import 'package:supreme/core/widgets/tires_item_widget.dart';
 
 import '../../core/utilities/demo_data.dart';
@@ -16,27 +17,7 @@ class TiresStockScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search Size, Brand',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
-
-              ),
-            ),
+            CustomTextField(hintText: 'Search Size, Brand', prefixIcon: Icon(Icons.search)),
             const SizedBox(height: 10,),
             Expanded(
               child: ListView.builder(itemBuilder: (context, index){

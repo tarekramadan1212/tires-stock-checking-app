@@ -7,7 +7,12 @@ class AppTheme {
     brightness: Brightness.light,
     colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primarySeed),
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.primarySeed,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(17),
+        ),
+      ),
       titleTextStyle: TextStyle(
         color: Colors.black,
         fontSize: 22,

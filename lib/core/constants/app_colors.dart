@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
 
-  static const Color primarySeed = Colors.deepPurple; // Blue
-
+  static const Color primarySeed = Colors.orange;
   static const Color success = Color(0xFF4CAF50); // Green
   static const Color warning = Color(0xFFFFC107); // Amber/Yellow
   static const Color info = Color(0xFF03A9F4);    // Light Blue
