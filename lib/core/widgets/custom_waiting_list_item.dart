@@ -79,7 +79,9 @@ class CustomWaitingListItem extends StatelessWidget {
                       child: Text(status.label,style: theme.displayMedium!.copyWith(color: status.color),),
                     );
                   }).toList(),
-                  onChanged: (WaitingCustomerStatus? newValue) {
+                  onChanged: (WaitingCustomerStatus? newValue)
+                  {
+
                   },
                 ),
               ),
