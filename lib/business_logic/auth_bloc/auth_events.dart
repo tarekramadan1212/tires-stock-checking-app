@@ -1,20 +1,28 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 abstract class AuthEvents{}
 
 class SignedInEvent extends AuthEvents{
   final bool isInvited;
-  final User user;
-  SignedInEvent({required this.isInvited, required this.user});
+  SignedInEvent({required this.isInvited});
 }
 
 class SignedOutEvent extends AuthEvents{}
 
-class UserUpdatedEvent extends AuthEvents{}
+class UnAuthenticatedEvent extends AuthEvents{}
 
-class PasswordRecoveryEvent extends AuthEvents{}
+class CompleteProfileEvent extends AuthEvents{
+  final Map<String, dynamic> userMetadata;
+  final String password;
+  CompleteProfileEvent({required this.userMetadata, required this.password});
+}
 
-class UserDeletedEvent extends AuthEvents{}
+class GetAllBranchesEvent extends AuthEvents{}
+
+class SignInWithEmailAndPasswordEvent extends AuthEvents{
+  final String email;
+  final String password;
+  SignInWithEmailAndPasswordEvent({required this.email, required this.password});
+
+}
 
 
 

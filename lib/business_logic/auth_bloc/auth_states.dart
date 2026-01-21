@@ -1,13 +1,19 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 abstract class AuthStates{}
 
 class AuthInitStata extends AuthStates{}
 
-class AuthenticatedState extends AuthStates{
+class SignInState extends AuthStates{
   final bool isInvited;
-  final User user;
-  AuthenticatedState({required this.isInvited, required this.user});
+  SignInState({required this.isInvited});
 }
 
+class GetAllBranchesState extends AuthStates{}
+
 class UnAuthenticatedState extends AuthStates{}
+
+class AuthLoadingState extends AuthStates{}
+
+class AuthErrorState extends AuthStates{
+  final String message;
+  AuthErrorState(this.message);
+}

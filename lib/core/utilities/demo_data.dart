@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:supreme/core/utilities/waiting_customer_status.dart';
 import 'package:supreme/core/widgets/tires_item_widget.dart';
-
 import '../widgets/custom_waiting_list_item.dart';
 
 List<Widget> stockItem = [
