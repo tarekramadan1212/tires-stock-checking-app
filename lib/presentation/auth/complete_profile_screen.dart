@@ -212,7 +212,6 @@ class _BranchCustomFormFieldState extends State<BranchCustomFormField> {
   }
 
   void _showMenu() {
-    print('I AM HERE INSIDE : ${_focusNode.hasFocus}');
 
     final authBloc = context.read<AuthBloc>();
     final overlay = Overlay.of(context);
@@ -228,11 +227,11 @@ class _BranchCustomFormFieldState extends State<BranchCustomFormField> {
             elevation: 4,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              //children: authBloc.branches.map((element)=> ListTile(title: Text(element['name']))).toList(),
-              children: [
-                ListTile(title: Text("Recent Sizes"), onTap: () {}),
-                ListTile(title: Text("Top Brands"), onTap: () {}),
-              ],
+              children: authBloc.branches.map((element)=> ListTile(title: Text(element.name))).toList(),
+              // children: [
+              //   ListTile(title: Text("Recent Sizes"), onTap: () {}),
+              //   ListTile(title: Text("Top Brands"), onTap: () {}),
+              // ],
             ),
           ),
         ),

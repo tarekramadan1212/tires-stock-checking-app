@@ -17,6 +17,6 @@ Future<void> setUpServiceLocator()async
 
   sl.registerLazySingleton<BaseAuthRepository>(() => AuthRepositoryImpl(authDataSource: sl()));
 
-  sl.registerFactory(() => AuthBloc(authRepository: sl<BaseAuthRepository>()));
+  sl.registerLazySingleton<AuthBloc>(() => AuthBloc(authRepository: sl<BaseAuthRepository>()));
 
 }

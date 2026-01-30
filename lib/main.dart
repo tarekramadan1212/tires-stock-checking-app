@@ -11,7 +11,6 @@ import 'business_logic/auth_bloc/auth_states.dart';
 import 'core/app_cubit/app_cubit.dart';
 import 'core/bloc_observer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'core/utilities/constants/strings.dart';
 import 'core/utilities/globals.dart';
 
@@ -37,50 +36,56 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => AppCubit()),
         BlocProvider(create: (context) => sl<AuthBloc>(), lazy: false),
       ],
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        home: BlocListener<AuthBloc, AuthStates>(
-          listenWhen: (previous, current) {
-            if(current is AuthErrorState) return true;
-            if(previous.runtimeType != current.runtimeType) return true;
-            if(previous is SignInState && current is SignInState)
-              {
-                return previous.isInvited != current.isInvited;
-              }
-            return false;
-          },
-          listener: (context, state) {
-            // SCENARIO: User is Authenticated (via Link, Login, or Auto-Login)
-            if (state is SignInState) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => state.isInvited
-                      ? const CompleteProfileScreen()
-                      : const HomePage(),
-                ),
-                    (route) => false,
-              );
-            }
-
-            // SCENARIO: User is not logged in (Startup, Logout, or Session Expiry)
-            else if (state is UnAuthenticatedState) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    (route) => false,
-              );
-            }
-
-            // SCENARIO: Something went wrong
-            else if (state is AuthErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-              );
-            }
-          },          child: LoadingScreen(),
+      child: BlocListener<AuthBloc, AuthStates>(
+        listenWhen: (previous, current) {
+          //error
+          if (current is AuthErrorState) return true;
+          //logging in
+          if (previous is! SignInState && current is SignInState) return true;
+          // when the user first time logs in it will return true, so user gets navigated to the complete profile screen.
+          // then it will return false to prevent the unnecessary rebuilds duo to the token refresh triggers.
+          if (previous is SignInState && current is SignInState) {
+            return previous.isInvited != current.isInvited;
+          }
+          //logging out - unauthenticated
+          if (current is UnAuthenticatedState && previous is! UnAuthenticatedState) return true;
+          return false;
+        },
+        listener: (context, state) {
+          // SCENARIO: User is Authenticated (via Link, Login, or Auto-Login)
+          if (state is SignInState) {
+            print('INSIDE THE RESPONSIBLE NAV SYSTEM');
+            navigatorKey.currentState?.pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => state.isInvited
+                    ? const CompleteProfileScreen()
+                    : const HomePage(),
+              ),
+                  (route) => false,
+            );
+          }
+          // SCENARIO: User is not logged in (Startup, Logout, or Session Expiry)
+          else if (state is UnAuthenticatedState) {
+            navigatorKey.currentState?.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+            );
+          }
+          // SCENARIO: Something went wrong
+          else if (state is AuthErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: MaterialApp(
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          home: LoadingScreen(),
         ),
       ),
     );

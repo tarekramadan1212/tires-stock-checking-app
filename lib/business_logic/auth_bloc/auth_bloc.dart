@@ -8,7 +8,6 @@ import 'auth_events.dart';
 import 'auth_states.dart';
 
 class AuthBloc extends Bloc<AuthEvents, AuthStates> {
-  final SupabaseClient _client = Supabase.instance.client;
   StreamSubscription<AuthState>? _authSubscription;
   final BaseAuthRepository authRepository;
   final _appLinks = AppLinks();
@@ -28,8 +27,10 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
 
     _authSubscription = authRepository.authStateStream.listen((data) {
       final session = data.session;
-
       print('DEBUG: Auth Event -> ${data.event}');
+      print('DEBUG: Session Check -> ${session?.user}');
+      print('DEBUG: Session Check -> ${session?.isExpired}');
+      print('DEBUG: Session Check -> ${session?.expiresAt}');
 
       if (session != null) {
         final isInvited = session.user.userMetadata?['is_new_user'] ?? true;
@@ -38,7 +39,6 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
         add(UnAuthenticatedEvent());
       }
     });
-
     on<SignedInEvent>(_onSignedInEvent);
     on<SignedOutEvent>(_onSignedOutEvent);
     on<UnAuthenticatedEvent>(_onUnAuthenticatedEvent);
@@ -46,7 +46,6 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     on<GetAllBranchesEvent>(_onGetAllBranchesEvent);
     on<SignInWithEmailAndPasswordEvent>(_onSignInWithEmailAndPasswordEvent);
 
-    if (_branches.isEmpty) add(GetAllBranchesEvent());
   }
 
   ///rather than emitting a new state for each change and depending on the state
@@ -59,7 +58,6 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     SignedInEvent event,
     Emitter<AuthStates> emit,
   ) async {
-    emit(AuthLoadingState());
     emit(SignInState(isInvited: event.isInvited));
   }
 
@@ -67,41 +65,32 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     SignInWithEmailAndPasswordEvent event,
     Emitter<AuthStates> emit,
   ) async {
-    emit(AuthLoadingState());
     final result = await authRepository.signInWithPassword(
       email: event.email,
       password: event.password,
     );
-    result.fold(
-      (failure) => emit(AuthErrorState(failure.message)),
-      (_) {
-        // We emit NOTHING on success!
-        // Why? Because the authStateStream will automatically
-        // detect the login and emit the SignInState for us.
-      },
-    );
+    result.fold((failure) => emit(AuthErrorState(failure.message)), (_) {
+      // We emit NOTHING on success!
+      // Why? Because the authStateStream will automatically
+      // detect the login and emit the SignInState for us.
+    });
   }
 
   Future<void> _onSignedOutEvent(
     SignedOutEvent event,
     Emitter<AuthStates> emit,
   ) async {
-    emit(AuthLoadingState());
     final result = await authRepository.signOut();
-    result.fold(
-      (failure) => emit(AuthErrorState(failure.message)),
-      (_) {
-        // will not emit logout state because the authStateStream will automatically
-        // detect the logout and emit the UnAuthenticatedState for us.
-      },
-    );
+    result.fold((failure) => emit(AuthErrorState(failure.message)), (_) {
+      // will not emit logout state because the authStateStream will automatically
+      // detect the logout and emit the UnAuthenticatedState for us.
+    });
   }
 
   void _onUnAuthenticatedEvent(
     UnAuthenticatedEvent event,
     Emitter<AuthStates> emit,
   ) {
-    emit(AuthLoadingState());
     emit(UnAuthenticatedState());
   }
 
@@ -112,30 +101,31 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     GetAllBranchesEvent event,
     Emitter<AuthStates> emit,
   ) async {
-    emit(AuthLoadingState());
     final result = await authRepository.fetchBranches();
-    result.fold((failure) => emit(AuthErrorState(failure.message)), (branches) {
-      _branches = branches;
-      emit(GetAllBranchesState());
-    });
+    result.fold(
+      (failure) {
+        emit(AuthErrorState(failure.message));
+        print('THE ERROR MESSAGE : ${failure.message}');
+      },
+      (branches) {
+        _branches = branches;
+        emit(GetAllBranchesState());
+      },
+    );
   }
 
   Future<void> _onCompleteProfileEvent(
     CompleteProfileEvent event,
     Emitter<AuthStates> emit,
   ) async {
-    emit(AuthLoadingState());
     final result = await authRepository.updateProfileCompletion(
       userMetadata: event.userMetadata,
       password: event.password,
     );
-    result.fold(
-      (failure) => emit(AuthErrorState(failure.message)),
-      (_){
-        //same as previous methods. on success will emit no thing.
-        // The stream will handel it by emitting the SignInState with isInvited = false.
-      },
-    );
+    result.fold((failure) => emit(AuthErrorState(failure.message)), (_) {
+      //same as previous methods. on success will emit no thing.
+      // The stream will handel it by emitting the SignInState with isInvited = false.
+    });
   }
 
   @override
