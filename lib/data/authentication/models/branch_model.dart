@@ -6,7 +6,7 @@ class BranchModel{
   });
 
   final String name;
-  final int id;
+  final String id;
 
   factory BranchModel.fromJson(Map<String, dynamic> json) => BranchModel(
         name: json["name"],

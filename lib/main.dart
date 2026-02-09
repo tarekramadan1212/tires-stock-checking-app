@@ -54,7 +54,6 @@ class MyApp extends StatelessWidget {
         listener: (context, state) {
           // SCENARIO: User is Authenticated (via Link, Login, or Auto-Login)
           if (state is SignInState) {
-            print('INSIDE THE RESPONSIBLE NAV SYSTEM');
             navigatorKey.currentState?.pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) => state.isInvited
@@ -73,7 +72,7 @@ class MyApp extends StatelessWidget {
           }
           // SCENARIO: Something went wrong
           else if (state is AuthErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
+            messengerKey.currentState?.showSnackBar(
               SnackBar(
                 content: Text(state.message),
                 backgroundColor: Colors.red,
@@ -83,6 +82,7 @@ class MyApp extends StatelessWidget {
         },
         child: MaterialApp(
           navigatorKey: navigatorKey,
+          scaffoldMessengerKey: messengerKey,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           home: LoadingScreen(),

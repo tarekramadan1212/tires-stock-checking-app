@@ -26,6 +26,7 @@ class AuthRepositoryImpl implements BaseAuthRepository {
             )
             .toList(),
       );
+
     } on PostgrestException catch (e) {
       return Left(ServerFailure(e.message));
     } on SocketException catch (e) {

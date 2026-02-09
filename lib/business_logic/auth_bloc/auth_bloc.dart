@@ -27,10 +27,6 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
 
     _authSubscription = authRepository.authStateStream.listen((data) {
       final session = data.session;
-      print('DEBUG: Auth Event -> ${data.event}');
-      print('DEBUG: Session Check -> ${session?.user}');
-      print('DEBUG: Session Check -> ${session?.isExpired}');
-      print('DEBUG: Session Check -> ${session?.expiresAt}');
 
       if (session != null) {
         final isInvited = session.user.userMetadata?['is_new_user'] ?? true;
@@ -65,6 +61,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     SignInWithEmailAndPasswordEvent event,
     Emitter<AuthStates> emit,
   ) async {
+    emit(AuthLoadingState());
     final result = await authRepository.signInWithPassword(
       email: event.email,
       password: event.password,
@@ -80,6 +77,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     SignedOutEvent event,
     Emitter<AuthStates> emit,
   ) async {
+    emit(AuthLoadingState());
     final result = await authRepository.signOut();
     result.fold((failure) => emit(AuthErrorState(failure.message)), (_) {
       // will not emit logout state because the authStateStream will automatically
@@ -105,7 +103,6 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     result.fold(
       (failure) {
         emit(AuthErrorState(failure.message));
-        print('THE ERROR MESSAGE : ${failure.message}');
       },
       (branches) {
         _branches = branches;
@@ -118,6 +115,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     CompleteProfileEvent event,
     Emitter<AuthStates> emit,
   ) async {
+    emit(AuthLoadingState());
     final result = await authRepository.updateProfileCompletion(
       userMetadata: event.userMetadata,
       password: event.password,
