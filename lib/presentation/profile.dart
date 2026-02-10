@@ -5,6 +5,8 @@ import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_events.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
 
+import 'auth/change_password.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -93,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
             leading: const Icon(Icons.lock_outline),
             title: const Text("Change Password"),
             onTap: () {
-              // Navigate to password change logic
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> ChangePasswordScreen()));
             },
           ),
 
