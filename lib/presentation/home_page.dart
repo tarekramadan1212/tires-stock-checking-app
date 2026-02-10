@@ -31,12 +31,16 @@ class HomePage extends StatelessWidget {
             elevation: 4.5,
             items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.search, size: 29),
+                icon: Icon(Icons.dashboard_outlined, size: 29),
                 label: 'Tires stock',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person_add_alt_sharp, size: 29),
+                icon: Icon(Icons.groups_outlined, size: 29),
                 label: 'Waiting list',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_circle_outlined, size: 29),
+                label: 'Profile',
               ),
             ],
           );

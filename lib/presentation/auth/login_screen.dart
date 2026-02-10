@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
+import 'package:supreme/business_logic/auth_bloc/auth_states.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
+import '../../business_logic/auth_bloc/auth_events.dart';
 import '../../core/utilities/globals.dart';
 import '../home_page.dart';
 
@@ -46,9 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     'Login to Supreme',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
@@ -62,14 +66,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primarySeed, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primarySeed,
+                          width: 2,
+                        ),
                       ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -84,7 +93,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {
@@ -97,7 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primarySeed, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primarySeed,
+                          width: 2,
+                        ),
                       ),
                     ),
                     validator: (value) {
@@ -112,15 +126,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 32),
                   ElevatedButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await supabase.auth.signInWithPassword(
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                        );
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const HomePage()),
+                        context.read<AuthBloc>().add(
+                          SignInWithEmailAndPasswordEvent(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          ),
                         );
                       }
                     },
@@ -132,9 +144,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    child:  BlocBuilder<AuthBloc, AuthStates>(
+                      builder: (context, state) {
+                        return state is AuthLoadingState? CircularProgressIndicator(): const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
                     ),
                   ),
                 ],
