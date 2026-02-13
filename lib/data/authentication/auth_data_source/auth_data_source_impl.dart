@@ -36,4 +36,9 @@ class AuthDataSourceImpl implements BaseAuthDataSource{
     await client.auth.signInWithPassword(email: email, password: password);
   }
 
+  @override
+  Future<void> changePassword({required String newPassword}) async{
+    await client.auth.updateUser(UserAttributes(password: newPassword));
+  }
+
 }

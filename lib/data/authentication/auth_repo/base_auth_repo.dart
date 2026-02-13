@@ -12,6 +12,8 @@ abstract class BaseAuthRepository {
 
   Future<Either<CustomFailure, Unit>> signOut();
 
+  Future<Either<CustomFailure, Unit>> changePassword({required String newPassword});
+
   Future<Either<CustomFailure, Unit>> setSession(String refreshToken);
 
   Stream<AuthState> get authStateStream;

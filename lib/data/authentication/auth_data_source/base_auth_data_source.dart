@@ -8,5 +8,6 @@ abstract class BaseAuthDataSource{
   Future<void> updateProfileCompletion({required Map<String, dynamic> userMetadata, required String password});
   Future<void> signInWithPassword({required String email, required String password});
   Future<void> signOut();
+  Future<void> changePassword({required String newPassword});
 
 }

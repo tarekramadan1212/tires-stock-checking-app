@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supreme/business_logic/auth_bloc/auth_events.dart';
 import 'package:supreme/core/widgets/custom_text_field.dart';
-
+import '../../business_logic/auth_bloc/auth_bloc.dart';
+import '../../business_logic/auth_bloc/auth_states.dart';
 import '../../core/utilities/constants/app_colors.dart';
 import '../../core/widgets/custom_button.dart';
 
@@ -51,6 +54,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           {
                             return 'Please enter The New password';
                           }
+                        if(value.length < 6)
+                          {
+                            return 'Password must be at least 6 characters';
+                          }
                         return null;
                       },
                       controller: _passwordController,
@@ -89,6 +96,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             return 'Please Confirm The New password';
 
                           }
+                        if(value != _passwordController.text)
+                          {
+                            return 'The Confirm Password is not matching';
+                          }
                         return null;
                       },
                       controller: _confirmPasswordController,
@@ -120,12 +131,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                     ),
                     SizedBox(height: 25),
-                    CustomButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Change Password',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
+                    BlocConsumer<AuthBloc, AuthStates>(
+                      listener: (context, state) {},
+                      builder: (context, state) {
+                        return CustomButton(
+                          onPressed: ()
+                          {
+                            if(_formKey.currentState!.validate())
+                              {
+                                context.read<AuthBloc>().add(ChangePasswordEvent(password: _confirmPasswordController.text));
+                              }
+                          },
+                          child: state is AuthLoadingState? CircularProgressIndicator() :Text(
+                            'Change Password',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      }
                     ),
                   ],
                 ),

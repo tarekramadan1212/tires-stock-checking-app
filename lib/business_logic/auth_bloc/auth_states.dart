@@ -17,3 +17,8 @@ class AuthErrorState extends AuthStates{
   final String message;
   AuthErrorState(this.message);
 }
+
+class ChangeSuccessPasswordState extends AuthStates{}
+
+
+

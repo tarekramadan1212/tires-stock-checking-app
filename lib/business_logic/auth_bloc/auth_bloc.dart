@@ -41,6 +41,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     on<CompleteProfileEvent>(_onCompleteProfileEvent);
     on<GetAllBranchesEvent>(_onGetAllBranchesEvent);
     on<SignInWithEmailAndPasswordEvent>(_onSignInWithEmailAndPasswordEvent);
+    on<ChangePasswordEvent>(_onChangePasswordEvent);
 
   }
 
@@ -124,6 +125,13 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
       //same as previous methods. on success will emit no thing.
       // The stream will handel it by emitting the SignInState with isInvited = false.
     });
+  }
+
+  Future<void> _onChangePasswordEvent(ChangePasswordEvent event, Emitter<AuthStates> emit) async
+  {
+    emit(AuthLoadingState());
+    final result = await authRepository.changePassword(newPassword: event.password);
+    result.fold((failure) => emit(AuthErrorState(failure.message)), (_)=> ChangeSuccessPasswordState());
   }
 
   @override

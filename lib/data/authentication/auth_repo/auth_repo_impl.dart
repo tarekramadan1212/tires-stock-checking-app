@@ -99,4 +99,21 @@ class AuthRepositoryImpl implements BaseAuthRepository {
       return Left(ServerFailure('Unexpected error occurred: ${e.toString()}'));
     }
   }
+
+  @override
+  Future<Either<CustomFailure, Unit>> changePassword({required String newPassword}) async{
+    try{
+      await authDataSource.changePassword(newPassword: newPassword);
+      return const Right(unit);
+    }on AuthException catch(e)
+    {
+      return Left(AuthFailure(e.message));
+    }on SocketException catch(e)
+    {
+      return Left(NetworkFailure(e.message));
+    }catch(e)
+    {
+      return Left(ServerFailure('Unexpected error occurred: ${e.toString()}'));
+    }
+  }
 }
