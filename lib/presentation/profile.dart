@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_events.dart';
+import 'package:supreme/core/app_cubit/app_cubit.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
 
 import 'auth/change_password.dart';
@@ -196,9 +197,10 @@ class ProfileScreen extends StatelessWidget {
               TextButton(onPressed: () => Navigator.pop(context),
                   child: const Text("Cancel")),
               TextButton(
-                onPressed: () {
+                onPressed: () async{
                   Navigator.pop(context); // Close dialog, Listener in main will handle navigation
                   context.read<AuthBloc>().add(SignedOutEvent());
+                  context.read<AppCubit>().changeBottomNavItem(0);
                 },
                 child: const Text(
                     "Logout", style: TextStyle(color: Colors.red)),
