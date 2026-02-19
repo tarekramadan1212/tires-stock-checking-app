@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
 import 'package:supreme/core/services/service_locator.dart';
 import 'package:supreme/core/themes/app_themes.dart';
+import 'package:supreme/presentation/auth/change_password.dart';
 import 'package:supreme/presentation/auth/complete_profile_screen.dart';
 import 'package:supreme/presentation/auth/loading_screen.dart';
 import 'package:supreme/presentation/auth/login_screen.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
           }
           //logging out - unauthenticated
           if (current is UnAuthenticatedState && previous is! UnAuthenticatedState) return true;
+          if(current is ChangeSuccessPasswordState) return true;
           return false;
         },
         listener: (context, state) {
@@ -79,6 +81,14 @@ class MyApp extends StatelessWidget {
               ),
             );
           }
+          // SCENARIO: User Received and clicked the Forgot Password Link
+          else if(state is NavigateToChangePasswordScreenState)
+            {
+              navigatorKey.currentState?.push(
+                MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+              );
+            }
+
         },
         child: MaterialApp(
           navigatorKey: navigatorKey,

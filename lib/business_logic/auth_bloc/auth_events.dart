@@ -23,11 +23,21 @@ class SignInWithEmailAndPasswordEvent extends AuthEvents{
   SignInWithEmailAndPasswordEvent({required this.email, required this.password});
 
 }
+
 class ChangePasswordEvent extends AuthEvents{
   final String password;
   ChangePasswordEvent({required this.password});
 
 }
+
+class ForgetPasswordEvent extends AuthEvents{
+  final String email;
+  ForgetPasswordEvent({required this.email});
+
+}
+
+class NavigateToChangePasswordScreenEvent extends AuthEvents{}
+
 
 
 

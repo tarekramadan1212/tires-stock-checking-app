@@ -20,5 +20,9 @@ class AuthErrorState extends AuthStates{
 
 class ChangeSuccessPasswordState extends AuthStates{}
 
+class ForgetPasswordState extends AuthStates{}
+
+class NavigateToChangePasswordScreenState extends AuthStates{}
+
 
 

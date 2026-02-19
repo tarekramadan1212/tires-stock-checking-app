@@ -4,33 +4,29 @@ import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_states.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
 import '../../business_logic/auth_bloc/auth_events.dart';
-import '../../core/utilities/globals.dart';
-import '../home_page.dart';
-import 'forget_password_screen.dart';
+import '../../core/widgets/custom_reset_dialog.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgetPasswordScreen extends StatefulWidget {
+  const ForgetPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgetPasswordScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<ForgetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('Forget Password'),),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -48,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    'Login to Supreme',
+                    'Forget Password Handling',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -85,56 +81,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: !_isPasswordVisible,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outlined),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColors.primarySeed,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
-                  ),
                   const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         context.read<AuthBloc>().add(
-                          SignInWithEmailAndPasswordEvent(
+                          ForgetPasswordEvent(
                             email: _emailController.text,
-                            password: _passwordController.text,
                           ),
                         );
+                        showResetSentDialog(context);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -146,23 +102,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     child:  BlocBuilder<AuthBloc, AuthStates>(
-                      builder: (context, state) {
-                        return state is AuthLoadingState? CircularProgressIndicator(): const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      }
+                        builder: (context, state) {
+                          return state is AuthLoadingState? CircularProgressIndicator(): const Text(
+                            'Send Email',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                      onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (_)=> ForgetPasswordScreen()));
-                      },
-                      child: Text('Forget Password...?'))
                 ],
               ),
             ),

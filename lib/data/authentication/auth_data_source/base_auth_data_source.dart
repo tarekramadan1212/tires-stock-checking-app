@@ -9,5 +9,6 @@ abstract class BaseAuthDataSource{
   Future<void> signInWithPassword({required String email, required String password});
   Future<void> signOut();
   Future<void> changePassword({required String newPassword});
+  Future<void> forgetPassword({required String email});
 
 }
