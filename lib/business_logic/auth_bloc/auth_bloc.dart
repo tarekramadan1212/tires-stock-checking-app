@@ -28,17 +28,16 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     _authSubscription = authRepository.authStateStream.listen((data) {
       final session = data.session;
       final event = data.event;
-
-      if (session != null) {
+      if(session != null &&event == AuthChangeEvent.passwordRecovery)
+        {
+          add(NavigateToChangePasswordScreenEvent());
+        }
+      else if (session != null) {
         final isInvited = session.user.userMetadata?['is_new_user'] ?? true;
         add(SignedInEvent(isInvited: isInvited));
       } else {
         add(UnAuthenticatedEvent());
       }
-      if(event == AuthChangeEvent.passwordRecovery)
-        {
-          add(NavigateToChangePasswordScreenEvent());
-        }
     });
     on<SignedInEvent>(_onSignedInEvent);
     on<SignedOutEvent>(_onSignedOutEvent);
@@ -146,7 +145,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
   {
     emit(AuthLoadingState());
     final result = await authRepository.forgetPassword(email: event.email);
-    result.fold((failure) => emit(AuthErrorState(failure.message)), (_)=> ForgetPasswordState());
+    result.fold((failure) => emit(AuthErrorState(failure.message)), (_)=> emit(ForgetPasswordState()));
   }
 
   void _onNavigateToChangePasswordScreenEvent(NavigateToChangePasswordScreenEvent event, Emitter<AuthStates> emit)

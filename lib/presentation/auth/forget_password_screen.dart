@@ -26,7 +26,7 @@ class _LoginScreenState extends State<ForgetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Forget Password'),),
+      appBar: AppBar(title: Text('Forget Password')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -44,9 +44,9 @@ class _LoginScreenState extends State<ForgetPasswordScreen> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    'Forget Password Handling',
+                    'Enter your email to reset your password',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
@@ -86,11 +86,8 @@ class _LoginScreenState extends State<ForgetPasswordScreen> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         context.read<AuthBloc>().add(
-                          ForgetPasswordEvent(
-                            email: _emailController.text,
-                          ),
+                          ForgetPasswordEvent(email: _emailController.text),
                         );
-                        showResetSentDialog(context);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -101,16 +98,24 @@ class _LoginScreenState extends State<ForgetPasswordScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child:  BlocBuilder<AuthBloc, AuthStates>(
-                        builder: (context, state) {
-                          return state is AuthLoadingState? CircularProgressIndicator(): const Text(
-                            'Send Email',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
+                    child: BlocConsumer<AuthBloc, AuthStates>(
+                      listener: (context, state) {
+                        if (state is ForgetPasswordState) {
+                          showResetSentDialog(context);
                         }
+                        ///already the error state is handled in the main.
+                      },
+                      builder: (context, state) {
+                        return state is AuthLoadingState
+                            ? CircularProgressIndicator()
+                            : const Text(
+                                'Send Email',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                      },
                     ),
                   ),
                 ],

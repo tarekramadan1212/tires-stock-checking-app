@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/core/utilities/netwrok/failures.dart';
 import 'package:supreme/data/authentication/auth_data_source/base_auth_data_source.dart';
@@ -121,6 +122,9 @@ class AuthRepositoryImpl implements BaseAuthRepository {
   Future<Either<CustomFailure, Unit>> forgetPassword({required String email}) async {
     try{
       await authDataSource.forgetPassword(email: email);
+      if (kDebugMode) {
+        print('==========In The success Part');
+      }
       return const Right(unit);
     }on AuthException catch (e) {
       return Left(AuthFailure(e.message));

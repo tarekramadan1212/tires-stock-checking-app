@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
           }
           //logging out - unauthenticated
           if (current is UnAuthenticatedState && previous is! UnAuthenticatedState) return true;
-          if(current is ChangeSuccessPasswordState) return true;
+          if(current is NavigateToChangePasswordScreenState) return true;
           return false;
         },
         listener: (context, state) {
