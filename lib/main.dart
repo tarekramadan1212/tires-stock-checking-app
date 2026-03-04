@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
+import 'package:supreme/core/app_cubit/app_states.dart';
 import 'package:supreme/core/services/service_locator.dart';
 import 'package:supreme/core/themes/app_themes.dart';
+import 'package:supreme/core/utilities/helpers/cache_helper.dart';
 import 'package:supreme/presentation/auth/change_password.dart';
 import 'package:supreme/presentation/auth/complete_profile_screen.dart';
 import 'package:supreme/presentation/auth/loading_screen.dart';
@@ -21,6 +23,7 @@ void main() async {
     url: ConstantString.url,
     anonKey: ConstantString.anonKey,
   );
+  await CacheHelper.getInstance().init();
   await setUpServiceLocator();
   Bloc.observer = AppBlocObserver();
   runApp(const MyApp());
@@ -90,12 +93,16 @@ class MyApp extends StatelessWidget {
             }
 
         },
-        child: MaterialApp(
-          navigatorKey: navigatorKey,
-          scaffoldMessengerKey: messengerKey,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          home: LoadingScreen(),
+        child: BlocBuilder<AppCubit, AppStates>(
+          builder: (context, state) {
+            return MaterialApp(
+              navigatorKey: navigatorKey,
+              scaffoldMessengerKey: messengerKey,
+              debugShowCheckedModeBanner: false,
+              theme: CacheHelper.getInstance().getBool('isDark')? AppTheme.darkTheme : AppTheme.lightTheme,
+              home: LoadingScreen(),
+            );
+          }
         ),
       ),
     );

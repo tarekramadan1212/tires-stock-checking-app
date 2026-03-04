@@ -29,7 +29,7 @@ class CustomWaitingListItem extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Card(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
@@ -49,14 +49,14 @@ class CustomWaitingListItem extends StatelessWidget {
                     children: [
                       Text(
                         customerName,
-                        style: theme.titleMedium!.copyWith(color: Colors.black),
+                        style: theme.titleMedium,
                       ),
-                      Text(tireSize, style: theme.displayMedium!.copyWith(color: Colors.grey.shade500)),
+                      Text(tireSize, style: theme.displayMedium),
                       Row(
                         spacing: 2,
                         children: [
                           Icon(Icons.phone, size: 16,),
-                          Text(phoneNumber, style: theme.displayMedium),
+                          Text(phoneNumber, style: theme.displaySmall),
                         ],
                       ),
                     ],

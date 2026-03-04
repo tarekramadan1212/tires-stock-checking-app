@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:supreme/core/utilities/demo_data.dart';
 
 class TiresItemWidget extends StatelessWidget {
   const TiresItemWidget({
-    required this.sizeAndBrand,
-    required this.cost,
-    required this.quantity,
-    required this.inStock,
-    super.key,
+    required this.model, super.key,
   });
 
-  final String sizeAndBrand;
-  final double cost;
-  final int quantity;
-  final bool inStock;
+  final TireModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +15,7 @@ class TiresItemWidget extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Card(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
@@ -31,16 +25,16 @@ class TiresItemWidget extends StatelessWidget {
                 spacing: 3,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(sizeAndBrand, style: theme.titleLarge),
+                  Text(model.sizeAndBrand, style: theme.titleLarge),
                   Container(
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
-                      color: inStock ? Colors.green : Colors.red,
+                      color: model.inStock ? Colors.green : Colors.red,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Text(
-                      inStock ? '$quantity In Stock' : 'Out of Stock',
-                      style: inStock
+                      model.inStock ? '${model.quantity} In Stock' : 'Out of Stock',
+                      style: model.inStock
                           ? theme.displayMedium!.copyWith(color: Colors.white)
                           : theme.displayMedium!.copyWith(color: Colors.white),
                     ),
@@ -54,7 +48,7 @@ class TiresItemWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Cost', style: theme.titleMedium),
-                      Text(cost.toString(), style: theme.titleMedium),
+                      Text(model.cost.toString(), style: theme.titleMedium),
                     ],
                   ),
                   SizedBox(width: 2.0,),

@@ -26,7 +26,7 @@ class AppTheme {
         color: Colors.grey.shade700,
       ),
       titleMedium: TextStyle(
-        fontSize: 15,
+        fontSize: 17.5,
         fontWeight: FontWeight.bold,
         color: Colors.orange,
       ),
@@ -35,6 +35,12 @@ class AppTheme {
         color: Colors.green.shade400,
         fontWeight:FontWeight.w800,
       ),
+      displaySmall: TextStyle(
+        fontSize: 13,
+        color: Colors.green.shade400,
+        fontWeight:FontWeight.w800,
+      ),
+
 
       // Use bodyMedium for standard paragraph text
       bodyMedium: TextStyle(fontSize: 16, color: Colors.black54, height: 1.5),
@@ -46,7 +52,50 @@ class AppTheme {
 
   static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primarySeed),
     brightness: Brightness.dark,
+    colorScheme: ColorScheme.fromSeed(
+        brightness: Brightness.dark,
+        seedColor: AppColors.primarySeed,
+        surface: AppColors.backgroundDark),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.primarySeed,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(17),
+        ),
+      ),
+      titleTextStyle: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+    textTheme: TextTheme(
+      titleLarge: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 17.5,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 13,
+        color: Colors.orangeAccent,
+        fontWeight:FontWeight.w800,
+      ),
+      displaySmall: TextStyle(
+        fontSize: 13,
+        color: Colors.grey,
+        fontWeight:FontWeight.w800,
+      ),
+
+      // Use bodyMedium for standard paragraph text
+      bodyMedium: TextStyle(fontSize: 16, height: 1.5, color: Colors.white),
+      // Use labelSmall for utility or caption text
+      labelSmall: TextStyle(fontSize: 12, color: Colors.grey),
+    ),
+    scaffoldBackgroundColor: AppColors.backgroundDark,
+
   );
 }

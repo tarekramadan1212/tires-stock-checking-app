@@ -9,7 +9,6 @@ class TiresStockScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme theme = Theme.of(context).textTheme;
     return Center(
       child:  Padding(
         padding: const EdgeInsets.all(7.0),
@@ -21,9 +20,9 @@ class TiresStockScreen extends StatelessWidget {
             const SizedBox(height: 10,),
             Expanded(
               child: ListView.builder(itemBuilder: (context, index){
-                return stockItem[index];
+                return TiresItemWidget(model: tires[index]);
               },
-                itemCount: stockItem.length,
+                itemCount: tires.length,
               ),
             )
           ],
