@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:supreme/core/utilities/waiting_customer_status.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
+import 'package:supreme/presentation/waiting_list_screen.dart';
 
 class CustomWaitingListItem extends StatelessWidget {
   const CustomWaitingListItem({
-    required this.customerName,
-    required this.phoneNumber,
-    required this.tireSize,
-    required this.tireBrand,
-    required this.notes,
-    required this.date,
-    required this.customerStatus,
+    required this.customerModel,
     super.key,
   });
 
-  final String customerName;
-  final String phoneNumber;
-  final String tireSize;
-  final String tireBrand;
-  final String notes;
-  final String date;
-  final WaitingCustomerStatus customerStatus;
+  final WaitingCustomerModel customerModel;
 
   @override
   Widget build(BuildContext context) {
@@ -41,22 +30,22 @@ class CustomWaitingListItem extends StatelessWidget {
                   CircleAvatar(
                     radius: 32,
                     backgroundColor: AppColors.primarySeed.withValues(alpha: 0.5),
-                    child: Text(customerName[0]),
+                    child: Text(customerModel.customerName[0]),
                   ),
                   Column(
                     spacing: 3,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        customerName,
+                        customerModel.customerName,
                         style: theme.titleMedium,
                       ),
-                      Text(tireSize, style: theme.displayMedium),
+                      Text(customerModel.tireSize, style: theme.displayMedium),
                       Row(
                         spacing: 2,
                         children: [
                           Icon(Icons.phone, size: 16,),
-                          Text(phoneNumber, style: theme.displaySmall),
+                          Text(customerModel.phoneNumber, style: theme.displaySmall),
                         ],
                       ),
                     ],

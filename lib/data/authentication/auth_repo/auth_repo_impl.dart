@@ -122,9 +122,6 @@ class AuthRepositoryImpl implements BaseAuthRepository {
   Future<Either<CustomFailure, Unit>> forgetPassword({required String email}) async {
     try{
       await authDataSource.forgetPassword(email: email);
-      if (kDebugMode) {
-        print('==========In The success Part');
-      }
       return const Right(unit);
     }on AuthException catch (e) {
       return Left(AuthFailure(e.message));

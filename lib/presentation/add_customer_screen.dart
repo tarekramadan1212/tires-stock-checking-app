@@ -5,6 +5,12 @@ import '../core/widgets/custom_text_field.dart';
 
 class AddCustomerScreen extends StatelessWidget {
   const AddCustomerScreen({super.key});
+  final List<String> tireBrands = const[
+    'Michelin', 'Bridgestone', 'Continental',
+    'Goodyear', 'Pirelli', 'Hankook', 'Yokohama'
+  ];
+
+  final String _selectedBrand = '';
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +69,25 @@ class AddCustomerScreen extends StatelessWidget {
                 ),
               ),
               CustomTextField(hintText: 'Michelin'),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children: tireBrands.map((brand){
+                  return ChoiceChip(
+                      label: Text(brand),
+                      selected: _selectedBrand == brand,
+                    onSelected: (bool selected)
+                    {
+                      // setState(() {
+                      //   _selectedBrand = selected ? brand : '';
+                      //_brandController.text = _selectedBrand;
+                      // });
+                    },
+                    selectedColor: AppColors.primarySeed.withValues(alpha: 0.3),
+                    checkmarkColor: AppColors.primarySeed,
+                  );
+                }).toList(),
+              ),
               Text(
                 'Notes',
                 style: TextStyle(
