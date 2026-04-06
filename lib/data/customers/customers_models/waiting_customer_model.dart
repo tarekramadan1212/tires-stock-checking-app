@@ -1,3 +1,6 @@
+
+enum CustomerStatus { cancelled, pending, notified, completed }
+
 class WaitingCustomerModel {
   final String createdAt;
   final String customerName;
@@ -5,7 +8,7 @@ class WaitingCustomerModel {
   final String tireSize;
   final String tireBrand;
   final String notes;
-  final String status;
+  final CustomerStatus status;
 
   const WaitingCustomerModel({
     required this.customerName,
@@ -24,20 +27,19 @@ class WaitingCustomerModel {
       tireSize: json['tire_size'],
       tireBrand: json['brand'],
       notes: json['notes'],
-      status: json['status'],
+      status: CustomerStatus.values.byName(json['status']),
       createdAt: json['created_at'],
     );
   }
 
-  Map<String, dynamic> toMap()
-  {
+  Map<String, dynamic> toMap() {
     return {
       'customer_name': customerName,
       'phone': phoneNumber,
       'tire_size': tireSize,
       'brand': tireBrand,
       'notes': notes,
-      'status': status,
+      'status': status.name,
       'created_at': createdAt,
     };
   }

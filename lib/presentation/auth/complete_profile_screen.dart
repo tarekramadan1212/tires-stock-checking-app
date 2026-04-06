@@ -16,6 +16,7 @@ class CompleteProfileScreen extends StatefulWidget {
 class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _branchController = TextEditingController();
+  String _branchId = '';
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -38,6 +39,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -76,6 +78,10 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                         final branchList = context.read<AuthBloc>().branches;
                         return BranchCustomFormField(
                           branchController: _branchController,
+                          onBranchSelected: (id)
+                          {
+                            _branchId = id;
+                          },
                           branches: branchList, // it will pass the updated list
                         );
                       },
@@ -170,6 +176,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                               final userMetadata = {
                                 'is_new_user': false,
                                 'branch_name': _branchController.text,
+                                'branch_id': _branchId,
                               };
                               context.read<AuthBloc>().add(
                                 CompleteProfileEvent(
@@ -213,11 +220,13 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 class BranchCustomFormField extends StatefulWidget {
   final TextEditingController branchController;
   final List<BranchModel> branches;
+  final Function(String id) onBranchSelected;
 
-  const BranchCustomFormField({
+   BranchCustomFormField({
     super.key,
     required this.branchController,
     required this.branches,
+    required this.onBranchSelected,
   });
 
   @override
@@ -279,6 +288,8 @@ class _BranchCustomFormFieldState extends State<BranchCustomFormField> {
                     title: Text(branch.name),
                     onTap: () {
                       widget.branchController.text = branch.name;
+                      widget.onBranchSelected(branch.id);
+                      _removeMenu();
                       _focusNode.unfocus();
                     },
                   );

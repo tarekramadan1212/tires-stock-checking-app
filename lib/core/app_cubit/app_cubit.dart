@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/core/app_cubit/app_states.dart';
 import 'package:supreme/core/utilities/helpers/cache_helper.dart';
 import 'package:supreme/presentation/tires_stock_screen.dart';
-import 'package:supreme/presentation/waiting_list_screen.dart';
+import 'package:supreme/presentation/waiting_customers/waiting_list_screen.dart';
 
 import '../../presentation/profile.dart';
 

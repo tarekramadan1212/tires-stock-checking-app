@@ -22,6 +22,10 @@ class AuthDataSourceImpl implements BaseAuthDataSource {
     await client.auth.updateUser(
       UserAttributes(data: userMetadata, password: password),
     );
+    await client
+        .from('profiles')
+        .update({'branch_id': userMetadata['branch_id']})
+        .eq('id', client.auth.currentUser!.id);
   }
 
   @override

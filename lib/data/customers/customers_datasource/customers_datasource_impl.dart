@@ -21,6 +21,7 @@ class CustomersDatasourceImpl implements ICustomersDatasource{
   @override
   Future<List<WaitingCustomerModel>> getAllWaitingCustomers() async{
     final response = await client.from('waiting_customers').select();
+    print('RESPONSE : $response');
     return response.map((json){
       return WaitingCustomerModel.fromJson(json);
     }).toList();
