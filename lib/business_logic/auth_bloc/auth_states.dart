@@ -24,5 +24,15 @@ class ForgetPasswordState extends AuthStates{}
 
 class NavigateToChangePasswordScreenState extends AuthStates{}
 
+enum GetUserDataStatus{
+  success,
+  error
+}
+class GetCurrentUserDataState extends AuthStates{
+  final GetUserDataStatus dataStatus;
+  String? message;
+  GetCurrentUserDataState({required this.dataStatus, this.message});
+}
+
 
 

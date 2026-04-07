@@ -6,6 +6,7 @@ import 'package:supreme/core/utilities/netwrok/failures.dart';
 import 'package:supreme/data/authentication/auth_data_source/base_auth_data_source.dart';
 import 'package:supreme/data/authentication/auth_repo/base_auth_repo.dart';
 import 'package:supreme/data/authentication/models/branch_model.dart';
+import 'package:supreme/data/authentication/models/userdata_model.dart';
 
 class AuthRepositoryImpl implements BaseAuthRepository {
   final BaseAuthDataSource authDataSource;
@@ -127,6 +128,16 @@ class AuthRepositoryImpl implements BaseAuthRepository {
       return Left(AuthFailure(e.message));
     } on SocketException catch (e) {
       return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Unexpected error occurred: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<CustomFailure, UserDataModel>> getUserData() async{
+    try {
+      final data = await authDataSource.getUserData();
+      return Right(data);
     } catch (e) {
       return Left(ServerFailure('Unexpected error occurred: ${e.toString()}'));
     }

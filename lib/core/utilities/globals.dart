@@ -6,3 +6,6 @@ final GlobalKey<ScaffoldMessengerState> messengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 final supabase = Supabase.instance.client;
+final branchId = supabase.auth.currentUser?.userMetadata?['branch_id'];
+
+

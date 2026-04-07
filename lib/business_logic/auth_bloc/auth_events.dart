@@ -38,6 +38,8 @@ class ForgetPasswordEvent extends AuthEvents{
 
 class NavigateToChangePasswordScreenEvent extends AuthEvents{}
 
+class GetCurrentUserDataEvent extends AuthEvents{}
+
 
 
 

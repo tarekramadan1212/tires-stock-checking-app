@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/data/authentication/models/branch_model.dart';
+import 'package:supreme/data/authentication/models/userdata_model.dart';
 import '../../../core/utilities/netwrok/failures.dart';
 
 abstract class BaseAuthRepository {
@@ -17,6 +18,8 @@ abstract class BaseAuthRepository {
   Future<Either<CustomFailure, Unit>> forgetPassword({required String email});
 
   Future<Either<CustomFailure, Unit>> setSession(String refreshToken);
+
+  Future<Either<CustomFailure, UserDataModel>> getUserData();
 
   Stream<AuthState> get authStateStream;
 }

@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supreme/data/authentication/models/userdata_model.dart';
 
 abstract class BaseAuthDataSource{
 
@@ -10,5 +11,6 @@ abstract class BaseAuthDataSource{
   Future<void> signOut();
   Future<void> changePassword({required String newPassword});
   Future<void> forgetPassword({required String email});
+  Future<UserDataModel> getUserData();
 
 }

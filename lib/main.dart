@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
+import 'package:supreme/business_logic/auth_bloc/auth_events.dart';
 import 'package:supreme/core/app_cubit/app_states.dart';
 import 'package:supreme/core/services/service_locator.dart';
 import 'package:supreme/core/themes/app_themes.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AppCubit()),
-        BlocProvider(create: (context) => sl<AuthBloc>(), lazy: false),
+        BlocProvider(create: (context) => sl<AuthBloc>()..add(GetCurrentUserDataEvent()), lazy: false),
       ],
       child: BlocListener<AuthBloc, AuthStates>(
         listenWhen: (previous, current) {

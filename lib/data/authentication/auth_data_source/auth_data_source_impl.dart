@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/data/authentication/auth_data_source/base_auth_data_source.dart';
+import 'package:supreme/data/authentication/models/userdata_model.dart';
 
 class AuthDataSourceImpl implements BaseAuthDataSource {
   final SupabaseClient client;
@@ -60,5 +61,20 @@ class AuthDataSourceImpl implements BaseAuthDataSource {
       email,
       redirectTo: 'io.supabase.supreme://reset-callback/',
     );
+  }
+
+  @override
+  Future<UserDataModel> getUserData() async{
+    final user = client.auth.currentUser;
+    if (user == null)
+    {
+      throw Exception('User not authenticated');
+    }
+    else
+    {
+      final metadata = user.userMetadata ?? {};
+      return UserDataModel(branchId: metadata['branch_id'], branchName: metadata['branch_name'], userId: user.id);
+
+    }
   }
 }

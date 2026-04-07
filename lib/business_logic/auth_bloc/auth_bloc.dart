@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/data/authentication/auth_repo/base_auth_repo.dart';
 import 'package:supreme/data/authentication/models/branch_model.dart';
+import 'package:supreme/data/authentication/models/userdata_model.dart';
 import 'auth_events.dart';
 import 'auth_states.dart';
 
@@ -28,11 +29,9 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     _authSubscription = authRepository.authStateStream.listen((data) {
       final session = data.session;
       final event = data.event;
-      if(session != null &&event == AuthChangeEvent.passwordRecovery)
-        {
-          add(NavigateToChangePasswordScreenEvent());
-        }
-      else if (session != null) {
+      if (session != null && event == AuthChangeEvent.passwordRecovery) {
+        add(NavigateToChangePasswordScreenEvent());
+      } else if (session != null) {
         final isInvited = session.user.userMetadata?['is_new_user'] ?? true;
         add(SignedInEvent(isInvited: isInvited));
       } else {
@@ -47,9 +46,10 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     on<SignInWithEmailAndPasswordEvent>(_onSignInWithEmailAndPasswordEvent);
     on<ChangePasswordEvent>(_onChangePasswordEvent);
     on<ForgetPasswordEvent>(_onForgetPasswordEvent);
-    on<NavigateToChangePasswordScreenEvent>(_onNavigateToChangePasswordScreenEvent);
-
-
+    on<NavigateToChangePasswordScreenEvent>(
+      _onNavigateToChangePasswordScreenEvent,
+    );
+    on<GetCurrentUserDataEvent>(_onGetCurrentUserData);
   }
 
   ///rather than emitting a new state for each change and depending on the state
@@ -134,23 +134,58 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     });
   }
 
-  Future<void> _onChangePasswordEvent(ChangePasswordEvent event, Emitter<AuthStates> emit) async
-  {
+  Future<void> _onChangePasswordEvent(
+    ChangePasswordEvent event,
+    Emitter<AuthStates> emit,
+  ) async {
     emit(AuthLoadingState());
-    final result = await authRepository.changePassword(newPassword: event.password);
-    result.fold((failure) => emit(AuthErrorState(failure.message)), (_)=> ChangeSuccessPasswordState());
+    final result = await authRepository.changePassword(
+      newPassword: event.password,
+    );
+    result.fold(
+      (failure) => emit(AuthErrorState(failure.message)),
+      (_) => ChangeSuccessPasswordState(),
+    );
   }
 
-  Future<void> _onForgetPasswordEvent(ForgetPasswordEvent event, Emitter<AuthStates> emit)async
-  {
+  Future<void> _onForgetPasswordEvent(
+    ForgetPasswordEvent event,
+    Emitter<AuthStates> emit,
+  ) async {
     emit(AuthLoadingState());
     final result = await authRepository.forgetPassword(email: event.email);
-    result.fold((failure) => emit(AuthErrorState(failure.message)), (_)=> emit(ForgetPasswordState()));
+    result.fold(
+      (failure) => emit(AuthErrorState(failure.message)),
+      (_) => emit(ForgetPasswordState()),
+    );
   }
 
-  void _onNavigateToChangePasswordScreenEvent(NavigateToChangePasswordScreenEvent event, Emitter<AuthStates> emit)
-  {
+  void _onNavigateToChangePasswordScreenEvent(
+    NavigateToChangePasswordScreenEvent event,
+    Emitter<AuthStates> emit,
+  ) {
     emit(NavigateToChangePasswordScreenState());
+  }
+
+  UserDataModel userData = UserDataModel();
+
+  Future<void> _onGetCurrentUserData(
+    GetCurrentUserDataEvent event,
+    Emitter<AuthStates> emit,
+  ) async {
+    final data = await authRepository.getUserData();
+    data.fold(
+      (failure) => emit(
+        GetCurrentUserDataState(
+          dataStatus: GetUserDataStatus.error,
+          message: failure.message,
+        ),
+      ),
+      (data) {
+        userData = data;
+        emit(GetCurrentUserDataState(dataStatus: GetUserDataStatus.success));
+      }
+    );
   }
 
   @override
