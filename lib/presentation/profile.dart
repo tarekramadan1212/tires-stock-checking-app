@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_events.dart';
 import 'package:supreme/core/app_cubit/app_cubit.dart';
 import 'package:supreme/core/app_cubit/app_states.dart';
-import 'package:supreme/core/utilities/constants/app_colors.dart';
 
 import 'auth/change_password.dart';
 
@@ -21,13 +19,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Supabase.instance.client.auth.currentUser;
-    final metadata = user?.userMetadata ?? {};
+    final userData = context.read<AuthBloc>().userData;
 
-    final String branchName = metadata['branch_name'] ?? 'Not Assigned';
-    final String branchId = metadata['branch_id'] ?? 'N/A';
-    final String email = user?.email ?? 'Unknown User';
-    final bool isVerified = user?.emailConfirmedAt != null;
+
+    final String branchName = userData.branchName ?? 'Not Assigned';
+    final String branchId = userData.branchId ?? 'N/A';
+    final String email = userData.email ?? 'Unknown User';
+    final bool isVerified = userData.isVerified?? false;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
@@ -36,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // --- HEADER SECTION ---
           CircleAvatar(
             radius: 50,
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+            backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
             child: Text(
               email.isNotEmpty ? email[0].toUpperCase() : 'U',
               style: TextStyle(
@@ -194,9 +192,9 @@ class InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.05),
+        color: primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: primaryColor.withOpacity(0.1)),
+        border: Border.all(color: primaryColor.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [

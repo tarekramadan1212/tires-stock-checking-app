@@ -64,17 +64,19 @@ class AuthDataSourceImpl implements BaseAuthDataSource {
   }
 
   @override
-  Future<UserDataModel> getUserData() async{
+  Future<UserDataModel> getUserData() async {
     final user = client.auth.currentUser;
-    if (user == null)
-    {
+    if (user == null) {
       throw Exception('User not authenticated');
-    }
-    else
-    {
+    } else {
       final metadata = user.userMetadata ?? {};
-      return UserDataModel(branchId: metadata['branch_id'], branchName: metadata['branch_name'], userId: user.id);
-
+      return UserDataModel(
+        email: user.email,
+        isVerified: user.emailConfirmedAt != null,
+        branchId: metadata['branch_id'],
+        branchName: metadata['branch_name'],
+        userId: user.id,
+      );
     }
   }
 }
