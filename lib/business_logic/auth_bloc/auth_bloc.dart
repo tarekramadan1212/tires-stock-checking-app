@@ -88,6 +88,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     emit(AuthLoadingState());
     final result = await authRepository.signOut();
     result.fold((failure) => emit(AuthErrorState(failure.message)), (_) {
+      if(userData.branchId != null) userData = UserDataModel();
       // will not emit logout state because the authStateStream will automatically
       // detect the logout and emit the UnAuthenticatedState for us.
     });

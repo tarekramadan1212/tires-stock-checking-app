@@ -21,15 +21,14 @@ class CustomersDatasourceImpl implements ICustomersDatasource{
   @override
   Future<List<WaitingCustomerModel>> getAllWaitingCustomers() async{
     final response = await client.from('waiting_customers').select();
-    print('RESPONSE : $response');
     return response.map((json){
       return WaitingCustomerModel.fromJson(json);
     }).toList();
   }
 
   @override
-  Future<void> updateWaitingCustomerStatus({required WaitingCustomerModel waitingCustomerModel}) async{
-    await client.from('waiting_customers').update(waitingCustomerModel.toMap());
+  Future<void> updateWaitingCustomerStatus({required String customerId,required WaitingCustomerModel waitingCustomerModel}) async{
+    await client.from('waiting_customers').update(waitingCustomerModel.toMap()).eq('id', customerId);
     //TODO: update this method to Get the recently added row.
   }
 

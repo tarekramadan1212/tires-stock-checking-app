@@ -57,9 +57,9 @@ class CustomersRepositoryImpl implements ICustomersRepo{
   }
 
   @override
-  Future<Either<CustomFailure, Unit>> updateWaitingCustomer({required WaitingCustomerModel model})async {
+  Future<Either<CustomFailure, Unit>> updateWaitingCustomer({required String customerId,required WaitingCustomerModel model})async {
     return _repoHandler(()async {
-      await datasource.updateWaitingCustomerStatus(waitingCustomerModel: model);
+      await datasource.updateWaitingCustomerStatus(customerId: customerId,waitingCustomerModel: model);
       return unit;
     });
   }

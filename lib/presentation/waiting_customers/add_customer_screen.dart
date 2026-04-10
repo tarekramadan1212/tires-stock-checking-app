@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
 import 'package:supreme/business_logic/waiting_list_cubit/waiting_list_states.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
+import 'package:supreme/core/utilities/helpers/snack_bar_helpers.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
 
 import '../../business_logic/waiting_list_cubit/waiting_list_cubit.dart';
 import '../../core/services/service_locator.dart';
 import '../../core/widgets/custom_text_field.dart';
 
-class AddCustomerScreen extends StatelessWidget {
-  AddCustomerScreen({super.key});
+class AddCustomerScreen extends StatefulWidget {
+  const AddCustomerScreen({super.key, this.customer});
+  final WaitingCustomerModel? customer;
 
+  @override
+  State<AddCustomerScreen> createState() => _AddCustomerScreenState();
+}
+
+class _AddCustomerScreenState extends State<AddCustomerScreen> {
   final List<String> tireBrands = const [
     'Michelin',
     'Bridgestone',
@@ -22,12 +30,38 @@ class AddCustomerScreen extends StatelessWidget {
   ];
 
   final List<String> _selectedBrands = [];
+
   final TextEditingController _customerNameController = TextEditingController();
+
   final TextEditingController _phoneController = TextEditingController();
+
   final TextEditingController _sizeController = TextEditingController();
+
   final TextEditingController _brandController = TextEditingController();
+
   final TextEditingController _notesController = TextEditingController();
+
   final cubit = sl<WaitingListCubit>();
+
+  @override
+  void initState() {
+    _customerNameController.text = widget.customer?.customerName??'';
+    _phoneController.text = widget.customer?.phoneNumber??'';
+    _sizeController.text = widget.customer?.tireSize??'';
+    _brandController.text = widget.customer?.tireBrand??'';
+    _notesController.text = widget.customer?.notes??'';
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    _customerNameController.dispose();
+    _phoneController.dispose();
+    _brandController.dispose();
+    _sizeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +117,7 @@ class AddCustomerScreen extends StatelessWidget {
                   ),
                 ),
                 CustomTextField(
+                  keyboardType: TextInputType.datetime,
                   hintText: '215/55/17',
                   controller: _sizeController,
                 ),
@@ -148,11 +183,16 @@ class AddCustomerScreen extends StatelessWidget {
                     {
                       if(state.addCustomerState == BlocStates.success)
                         {
-                          print('success');
+                          _customerNameController.clear();
+                          _phoneController.clear();
+                          _sizeController.clear();
+                          _brandController.clear();
+                          _notesController.clear();
+                          Navigator.pop(context);
                         }
                       else if(state.addCustomerState == BlocStates.error)
                         {
-                          print('Error -- ${state.errorMessage}');
+                          showErrorSnackBar(context, state.errorMessage!);
                         }
                       else if(state.addCustomerState == BlocStates.loading)
                         {
@@ -162,7 +202,9 @@ class AddCustomerScreen extends StatelessWidget {
                     builder: (context, state) {
                       return ElevatedButton(
                         onPressed: () async {
+                          final branchId = context.read<AuthBloc>().userData.branchId;
                           final model = WaitingCustomerModel(
+                            branchId: branchId!,
                             customerName: _customerNameController.text,
                             phoneNumber: _phoneController.text,
                             tireSize: _sizeController.text,

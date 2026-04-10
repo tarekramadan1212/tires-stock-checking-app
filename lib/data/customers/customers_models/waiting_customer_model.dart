@@ -8,7 +8,8 @@ class WaitingCustomerModel {
   final String tireSize;
   final String tireBrand;
   final String notes;
-  final CustomerStatus status;
+  final CustomerStatus? status;
+  final String branchId;
 
   const WaitingCustomerModel({
     required this.customerName,
@@ -18,6 +19,7 @@ class WaitingCustomerModel {
     required this.notes,
     required this.status,
     required this.createdAt,
+    required this.branchId,
   });
 
   factory WaitingCustomerModel.fromJson(Map<String, dynamic> json) {
@@ -27,19 +29,21 @@ class WaitingCustomerModel {
       tireSize: json['tire_size'],
       tireBrand: json['brand'],
       notes: json['notes'],
-      status: CustomerStatus.values.byName(json['status']),
+      status: json['status'] == null ?CustomerStatus.pending: CustomerStatus.values.byName(json['status']),
       createdAt: json['created_at'],
+      branchId: json['branch_id']
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'branch_id': branchId,
       'customer_name': customerName,
       'phone': phoneNumber,
       'tire_size': tireSize,
       'brand': tireBrand,
       'notes': notes,
-      'status': status.name,
+      'status': status?.name??'pending',
       'created_at': createdAt,
     };
   }

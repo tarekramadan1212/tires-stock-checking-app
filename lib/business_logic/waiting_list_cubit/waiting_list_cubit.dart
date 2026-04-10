@@ -1,16 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/business_logic/waiting_list_cubit/waiting_list_states.dart';
-import 'package:supreme/core/utilities/waiting_customer_status.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
-import 'package:supreme/data/customers/customers_repository/customers_repository_impl.dart';
 import 'package:supreme/data/customers/customers_repository/i_customers_repository.dart';
+import '../../core/widgets/custom_waiting_list_item.dart';
 
 class WaitingListCubit extends Cubit<WaitingCustomerState> {
   final ICustomersRepo repository;
 
   WaitingListCubit({required this.repository}) : super(WaitingCustomerState());
 
-  WaitingCustomerStatus customerStatus = PendingStatus();
+  WaitingCustomerStatus customerStatus = WaitingCustomerStatus.pending;
 
   void changeCustomerStatus({required WaitingCustomerStatus newStatus}) {
     customerStatus = newStatus;

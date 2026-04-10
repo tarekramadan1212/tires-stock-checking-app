@@ -5,7 +5,7 @@ import 'package:supreme/data/customers/customers_models/waiting_customer_model.d
 abstract class ICustomersRepo{
   Future<Either<CustomFailure, Unit>> addNewWaitingCustomer({required WaitingCustomerModel model});
   Future<Either<CustomFailure, List<WaitingCustomerModel>>> getAllWaitingCustomers();
-  Future<Either<CustomFailure, Unit>> updateWaitingCustomer({required WaitingCustomerModel model});
+  Future<Either<CustomFailure, Unit>> updateWaitingCustomer({required String customerId,required WaitingCustomerModel model});
   Future<Either<CustomFailure, Unit>> deleteWaitingCustomer({required String customerId});
 
 }

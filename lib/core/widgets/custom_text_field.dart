@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     this.border,
     this.focusedBorder,
     this.enabledBorder,
+    this.keyboardType,
     super.key,
   });
 
@@ -27,12 +28,14 @@ class CustomTextField extends StatelessWidget {
   final InputBorder? border;
   final InputBorder? focusedBorder;
   final InputBorder? enabledBorder;
+  final TextInputType? keyboardType;
 
 
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: keyboardType,
       validator: validator,
       controller: controller,
       maxLines: maxLines??1,
