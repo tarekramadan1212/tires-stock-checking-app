@@ -1,11 +1,17 @@
-
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
 
-abstract class ICustomersDatasource{
-  Future<void> addNewWaitingCustomer({required WaitingCustomerModel waitingCustomerModel});
+abstract class ICustomersDatasource {
+  Future<WaitingCustomerModel> addNewWaitingCustomer({
+    required WaitingCustomerModel waitingCustomerModel,
+  });
+
   Future<List<WaitingCustomerModel>> getAllWaitingCustomers();
-  Future<void> updateWaitingCustomerStatus({required String customerId,required WaitingCustomerModel waitingCustomerModel});
+
+  Future<WaitingCustomerModel> updateWaitingCustomerData({
+    required WaitingCustomerModel originalModel,
+    required WaitingCustomerModel updatedModel,
+  });
+
   Future<void> deleteWaitingCustomer({required String customerId});
   //TODO: Search Method for customers.
 }
-

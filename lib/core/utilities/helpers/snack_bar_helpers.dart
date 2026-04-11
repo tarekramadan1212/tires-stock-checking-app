@@ -6,6 +6,7 @@ void showErrorSnackBar(BuildContext context, String message) {
       content: Text(message),
       backgroundColor: Colors.red,
       behavior: SnackBarBehavior.floating,
+      duration: Duration(seconds: 2),
     ),
   );
 }
@@ -13,5 +14,7 @@ void showErrorSnackBar(BuildContext context, String message) {
 void showSuccessSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message),
     backgroundColor: Colors.green,
-    behavior: SnackBarBehavior.floating,));
+    behavior: SnackBarBehavior.floating,
+    duration: Duration(seconds: 2),
+  ));
 }

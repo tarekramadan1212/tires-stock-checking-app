@@ -2,34 +2,58 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/data/customers/customers_datasource/I_customers_datasource.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
 
-class CustomersDatasourceImpl implements ICustomersDatasource{
-
+class CustomersDatasourceImpl implements ICustomersDatasource {
   final SupabaseClient client;
+
   CustomersDatasourceImpl({required this.client});
 
   @override
-  Future<void> addNewWaitingCustomer({required WaitingCustomerModel waitingCustomerModel}) async{
-    await client.from('waiting_customers').insert(waitingCustomerModel.toMap());
-    //TODO: update this method to Get the recently added row.
+  Future<WaitingCustomerModel> addNewWaitingCustomer({
+    required WaitingCustomerModel waitingCustomerModel,
+  }) async {
+    final data=  await client
+        .from('waiting_customers')
+        .insert(waitingCustomerModel.toMap())
+        .select()
+        .single();
+    return WaitingCustomerModel.fromJson(data);
   }
 
   @override
-  Future<void> deleteWaitingCustomer({required String customerId}) async{
+  Future<void> deleteWaitingCustomer({required String customerId}) async {
     await client.from('waiting_customers').delete().eq('id', customerId);
   }
 
   @override
-  Future<List<WaitingCustomerModel>> getAllWaitingCustomers() async{
+  Future<List<WaitingCustomerModel>> getAllWaitingCustomers() async {
     final response = await client.from('waiting_customers').select();
-    return response.map((json){
+    return response.map((json) {
       return WaitingCustomerModel.fromJson(json);
     }).toList();
   }
 
   @override
-  Future<void> updateWaitingCustomerStatus({required String customerId,required WaitingCustomerModel waitingCustomerModel}) async{
-    await client.from('waiting_customers').update(waitingCustomerModel.toMap()).eq('id', customerId);
-    //TODO: update this method to Get the recently added row.
+  Future<WaitingCustomerModel> updateWaitingCustomerData({
+    required WaitingCustomerModel originalModel,
+    required WaitingCustomerModel updatedModel,
+  }) async {
+    final changes = _calculateChanges(originalModel, updatedModel);
+    final data = await client
+        .from('waiting_customers')
+        .update(changes)
+        .eq('id', originalModel.id!).select().single();
+    return WaitingCustomerModel.fromJson(data);
   }
 
+  Map<String, dynamic> _calculateChanges(
+      WaitingCustomerModel originalModel, WaitingCustomerModel updatedModel)
+  {
+    final changes = <String, dynamic>{};
+    if(originalModel.customerName != updatedModel.customerName)changes['customer_name'] = updatedModel.customerName;
+    if(originalModel.phoneNumber != updatedModel.phoneNumber)changes['phone'] = updatedModel.phoneNumber;
+    if(originalModel.tireSize != updatedModel.tireSize)changes['tire_size'] = updatedModel.tireSize;
+    if(originalModel.tireBrand != updatedModel.tireBrand)changes['brand'] = updatedModel.tireBrand;
+    if(originalModel.notes != updatedModel.notes)changes['notes'] = updatedModel.notes;
+    return changes;
+  }
 }

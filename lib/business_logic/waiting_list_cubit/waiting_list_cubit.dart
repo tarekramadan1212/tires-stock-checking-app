@@ -45,7 +45,15 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
           errorMessage: failure.message,
         ),
       ),
-      (_) => emit(state.copyWith(addCustomerState: BlocStates.success)),
+      (data) {
+        state.waitingCustomers.add(data);
+        emit(
+          state.copyWith(
+            waitingCustomers: state.waitingCustomers,
+            addCustomerState: BlocStates.success,
+          ),
+        );
+      },
     );
   }
 }

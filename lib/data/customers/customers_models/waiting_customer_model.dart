@@ -2,6 +2,7 @@
 enum CustomerStatus { cancelled, pending, notified, completed }
 
 class WaitingCustomerModel {
+  final int? id;
   final String createdAt;
   final String customerName;
   final String phoneNumber;
@@ -12,6 +13,7 @@ class WaitingCustomerModel {
   final String branchId;
 
   const WaitingCustomerModel({
+    this.id,
     required this.customerName,
     required this.phoneNumber,
     required this.tireSize,
@@ -24,6 +26,7 @@ class WaitingCustomerModel {
 
   factory WaitingCustomerModel.fromJson(Map<String, dynamic> json) {
     return WaitingCustomerModel(
+      id: json['id'],
       customerName: json['customer_name'],
       phoneNumber: json['phone'],
       tireSize: json['tire_size'],
