@@ -4,10 +4,7 @@ import 'package:supreme/presentation/waiting_customers/add_customer_screen.dart'
 import '../../data/customers/customers_models/waiting_customer_model.dart';
 
 class CustomWaitingListItem extends StatelessWidget {
-  const CustomWaitingListItem({
-    required this.customerModel,
-    super.key,
-  });
+  const CustomWaitingListItem({required this.customerModel, super.key});
 
   final WaitingCustomerModel customerModel;
 
@@ -16,8 +13,13 @@ class CustomWaitingListItem extends StatelessWidget {
     final TextTheme theme = Theme.of(context).textTheme;
 
     return InkWell(
-      onTap: (){
-        Navigator.push(context,MaterialPageRoute(builder: (_)=> AddCustomerScreen(customer: customerModel,)));
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AddCustomerScreen(customer: customerModel),
+          ),
+        );
       },
       child: SizedBox(
         width: double.infinity,
@@ -28,54 +30,76 @@ class CustomWaitingListItem extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  spacing: 5.6,
-                  children: [
-                    CircleAvatar(
-                      radius: 32,
-                      backgroundColor: AppColors.primarySeed.withValues(alpha: 0.5),
-                      child: Text(customerModel.customerName[0]),
-                    ),
-                    Column(
-                      spacing: 3,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          customerModel.customerName,
-                          style: theme.titleMedium,
+                Expanded(
+                  child: Row(
+                    spacing: 5.6,
+                    children: [
+                      CircleAvatar(
+                        radius: 32,
+                        backgroundColor: AppColors.primarySeed.withValues(
+                          alpha: 0.5,
                         ),
-                        Text(customerModel.tireSize, style: theme.displayMedium),
-                        Row(
-                          spacing: 2,
+                        child: Text(customerModel.customerName[0]),
+                      ),
+                      Flexible(
+                        child: Column(
+                          spacing: 3,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.phone, size: 16,),
-                            Text(customerModel.phoneNumber, style: theme.displaySmall),
+                            Text(
+                              customerModel.customerName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.titleMedium,
+                            ),
+                            Text(
+                              customerModel.tireSize,
+                              style: theme.displayMedium,
+                            ),
+                            Row(
+                              spacing: 2,
+                              children: [
+                                Icon(Icons.phone, size: 16),
+                                Text(
+                                  customerModel.phoneNumber,
+                                  style: theme.displaySmall,
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 2.0,),
 
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical:2.1, horizontal: 10),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2.1,
+                    horizontal: 10,
+                  ),
                   decoration: BoxDecoration(
-                    color: AppColors.primarySeed.withValues(alpha:0.2),
+                    color: AppColors.primarySeed.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: DropdownButton<WaitingCustomerStatus>(
                     value: WaitingCustomerStatus.pending,
                     underline: Container(),
-                    items: WaitingCustomerStatus.values.map((WaitingCustomerStatus status) {
+                    items: WaitingCustomerStatus.values.map((
+                      WaitingCustomerStatus status,
+                    ) {
                       return DropdownMenuItem<WaitingCustomerStatus>(
                         value: status,
-                        child: Text(status.label,style: theme.displayMedium!.copyWith(color: status.color),),
+                        child: Text(
+                          status.label,
+                          style: theme.displayMedium!.copyWith(
+                            color: status.color,
+                          ),
+                        ),
                       );
                     }).toList(),
-                    onChanged: (WaitingCustomerStatus? newValue)
-                    {
-
-                    },
+                    onChanged: (WaitingCustomerStatus? newValue) {},
                   ),
                 ),
               ],
@@ -86,8 +110,6 @@ class CustomWaitingListItem extends StatelessWidget {
     );
   }
 }
-
-
 
 enum WaitingCustomerStatus {
   pending('Pending', Colors.orange),

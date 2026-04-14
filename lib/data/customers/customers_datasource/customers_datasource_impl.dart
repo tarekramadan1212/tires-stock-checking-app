@@ -38,10 +38,12 @@ class CustomersDatasourceImpl implements ICustomersDatasource {
     required WaitingCustomerModel updatedModel,
   }) async {
     final changes = _calculateChanges(originalModel, updatedModel);
+    if(changes.isEmpty)return originalModel;
     final data = await client
         .from('waiting_customers')
         .update(changes)
         .eq('id', originalModel.id!).select().single();
+    print('The Data From The Database: $data');
     return WaitingCustomerModel.fromJson(data);
   }
 

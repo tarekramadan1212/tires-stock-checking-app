@@ -5,7 +5,6 @@ import 'package:supreme/business_logic/waiting_list_cubit/waiting_list_states.da
 import 'package:supreme/core/utilities/constants/app_colors.dart';
 import 'package:supreme/core/utilities/helpers/snack_bar_helpers.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
-
 import '../../business_logic/waiting_list_cubit/waiting_list_cubit.dart';
 import '../../core/services/service_locator.dart';
 import '../../core/widgets/custom_text_field.dart';
@@ -181,7 +180,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   child: BlocConsumer<WaitingListCubit, WaitingCustomerState>(
                     listener: (context, state)
                     {
-                      if(state.addCustomerState == BlocStates.success)
+                      if(state.addCustomerState == BlocStates.success || state.updateCustomerState == BlocStates.success)
                         {
                           _customerNameController.clear();
                           _phoneController.clear();
@@ -189,39 +188,61 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                           _brandController.clear();
                           _notesController.clear();
                           Navigator.pop(context);
+                          showSuccessSnackBar(context, 'Successful action');
                         }
-                      else if(state.addCustomerState == BlocStates.error)
+                      else if(state.addCustomerState == BlocStates.error || state.updateCustomerState == BlocStates.error)
                         {
                           showErrorSnackBar(context, state.errorMessage!);
                         }
-                      else if(state.addCustomerState == BlocStates.loading)
+                      else if(state.addCustomerState == BlocStates.loading || state.updateCustomerState == BlocStates.loading)
                         {
-                          print('loading');
+                          print('loading inside the Add Screen');
                         }
                     },
                     builder: (context, state) {
                       return ElevatedButton(
-                        onPressed: () async {
+                        onPressed: ()async {
                           final branchId = context.read<AuthBloc>().userData.branchId;
-                          final model = WaitingCustomerModel(
+                          final updatedModel = WaitingCustomerModel(
                             branchId: branchId!,
                             customerName: _customerNameController.text,
                             phoneNumber: _phoneController.text,
                             tireSize: _sizeController.text,
                             tireBrand: _brandController.text,
                             notes: _notesController.text,
-                            status: CustomerStatus.pending,
-                            createdAt: DateTime.now().toString(),
+                            status: widget.customer?.status?? CustomerStatus.pending,
+                            createdAt: widget.customer?.createdAt?? DateTime.now().toString(),
                           );
-                          await cubit.addNewCustomer(model);
+
+                          if(widget.customer == null)
+                            {
+                              await cubit.addNewCustomer(updatedModel);
+
+                            }else
+                              {
+                                final originalModel = WaitingCustomerModel(
+                                  branchId: branchId,
+                                  customerName: widget.customer!.customerName,
+                                  id: widget.customer!.id,
+                                  tireBrand: widget.customer!.tireBrand,
+                                  tireSize: widget.customer!.tireSize,
+                                  notes: widget.customer!.notes,
+                                  phoneNumber: widget.customer!.phoneNumber,
+                                  status: widget.customer!.status,
+                                  createdAt: widget.customer!.createdAt,
+                                );
+                                await cubit.updateCustomerData(originalModel: originalModel, updatedModel: updatedModel);
+                              }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primarySeed,
                           elevation: 0,
                         ),
-                        child: state.addCustomerState == BlocStates.loading
+                        child: widget.customer == null? state.addCustomerState == BlocStates.loading
                             ? CircularProgressIndicator()
-                            : Text('Add To The Waiting List'),
+                            : Text('Add To The Waiting List') : state.updateCustomerState == BlocStates.loading
+                            ? CircularProgressIndicator()
+                            : Text('Update User'),
                       );
                     },
                   ),

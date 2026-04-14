@@ -56,4 +56,24 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
       },
     );
   }
+
+  Future<void> updateCustomerData({required WaitingCustomerModel originalModel, required WaitingCustomerModel updatedModel})async
+  {
+    emit(state.copyWith(updateCustomerState: BlocStates.loading));
+    final result = await repository.updateWaitingCustomer(originalModel: originalModel, updatedModel: updatedModel);
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          updateCustomerState: BlocStates.error,
+          errorMessage: failure.message,
+        ),
+      ),
+      (data) {
+        final index = state.waitingCustomers.indexWhere((row) => row.id == data.id);
+        final List<WaitingCustomerModel> newList = List.from(state.waitingCustomers);
+        newList[index] = data;
+        print('success data from update: ${state.waitingCustomers}');
+        emit(state.copyWith(waitingCustomers: newList, updateCustomerState: BlocStates.success));
+      });
+  }
 }

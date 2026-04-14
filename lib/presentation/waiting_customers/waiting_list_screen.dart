@@ -28,7 +28,7 @@ class WaitingListScreen extends StatelessWidget {
                   if(state.getCustomersState == BlocStates.success)
                     {
                       print('success');
-                      print('DATA : ${state.waitingCustomers}');
+                      print('DATA : ${state.waitingCustomers[0].id}');
                     }
                   else if(state.getCustomersState == BlocStates.error)
                     {
