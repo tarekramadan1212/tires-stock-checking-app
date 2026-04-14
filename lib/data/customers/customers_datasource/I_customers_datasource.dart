@@ -12,6 +12,6 @@ abstract class ICustomersDatasource {
     required WaitingCustomerModel updatedModel,
   });
 
-  Future<void> deleteWaitingCustomer({required String customerId});
+  Future<WaitingCustomerModel> deleteWaitingCustomer({required String customerId});
   //TODO: Search Method for customers.
 }

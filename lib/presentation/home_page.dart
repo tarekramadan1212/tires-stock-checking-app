@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supreme/business_logic/waiting_list_cubit/waiting_list_cubit.dart';
+import 'package:supreme/business_logic/waiting_list_cubit/waiting_list_states.dart';
 import '../core/app_cubit/app_cubit.dart';
 import '../core/app_cubit/app_states.dart';
+import '../core/services/service_locator.dart';
 import 'waiting_customers/add_customer_screen.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+
+  final waitingListCubit = sl<WaitingListCubit>();
 
   @override
   Widget build(BuildContext context) {
@@ -13,12 +18,35 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
-        child: BlocBuilder<AppCubit, AppStates>(
-          builder: (context, state) {
-            return AppBar(
-              title: Text(appCubit.appBarTitles[appCubit.currentIndex]),
-            );
-          },
+        child: BlocProvider.value(
+          value: waitingListCubit,
+          child: BlocBuilder<AppCubit, AppStates>(
+            builder: (context, state) {
+              return BlocBuilder<WaitingListCubit, WaitingCustomerState>(
+                builder: (context, state) {
+                  return AppBar(
+                    title: Text(appCubit.appBarTitles[appCubit.currentIndex]),
+                    leading: IconButton(
+                      onPressed: ()
+                      {
+                        waitingListCubit.toggleSelectionMode();
+                      },
+                      icon: Icon(Icons.arrow_back_rounded),
+                    ),
+                    actions: [
+                      ?state.isSelectionMode?IconButton(
+                          onPressed: ()
+                          {
+                            //TODO: DELETE SELECTED CUSTOMERS
+                          },
+                          icon: Icon(Icons.delete),
+                      ): null
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
       bottomNavigationBar: BlocBuilder<AppCubit, AppStates>(

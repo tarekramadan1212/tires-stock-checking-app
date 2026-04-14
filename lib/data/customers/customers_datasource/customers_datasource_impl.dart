@@ -20,8 +20,10 @@ class CustomersDatasourceImpl implements ICustomersDatasource {
   }
 
   @override
-  Future<void> deleteWaitingCustomer({required String customerId}) async {
-    await client.from('waiting_customers').delete().eq('id', customerId);
+  Future<WaitingCustomerModel> deleteWaitingCustomer({required String customerId}) async {
+    final data = await client.from('waiting_customers').delete().eq('id', customerId).select();
+    if(data.isNotEmpty) return WaitingCustomerModel.fromJson(data.first);
+    throw Exception('Something went wrong');
   }
 
   @override
@@ -43,7 +45,6 @@ class CustomersDatasourceImpl implements ICustomersDatasource {
         .from('waiting_customers')
         .update(changes)
         .eq('id', originalModel.id!).select().single();
-    print('The Data From The Database: $data');
     return WaitingCustomerModel.fromJson(data);
   }
 

@@ -44,12 +44,11 @@ class CustomersRepositoryImpl implements ICustomersRepo {
   ///method example the T now is Unit, Dart just inferred it from the returned data,
 
   @override
-  Future<Either<CustomFailure, Unit>> deleteWaitingCustomer({
+  Future<Either<CustomFailure, WaitingCustomerModel>> deleteWaitingCustomer({
     required String customerId,
   }) async {
     return _repoHandler(() async {
-      await datasource.deleteWaitingCustomer(customerId: customerId);
-      return unit;
+      return await datasource.deleteWaitingCustomer(customerId: customerId);
     });
   }
 

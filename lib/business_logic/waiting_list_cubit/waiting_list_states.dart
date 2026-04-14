@@ -9,6 +9,8 @@ class WaitingCustomerState {
   final BlocStates updateCustomerState;
   final BlocStates deleteCustomerState;
   final String? errorMessage;
+  final bool isSelectionMode;
+
 
   WaitingCustomerState({
     this.waitingCustomers = const [],
@@ -17,6 +19,7 @@ class WaitingCustomerState {
     this.deleteCustomerState = BlocStates.initial,
     this.getCustomersState = BlocStates.initial,
     this.errorMessage,
+    this.isSelectionMode = false,
   });
 
   WaitingCustomerState copyWith({
@@ -26,6 +29,7 @@ class WaitingCustomerState {
     BlocStates? deleteCustomerState,
     BlocStates? getCustomersState,
     String? errorMessage,
+    bool? isSelectionMode,
   }) {
     return WaitingCustomerState(
       waitingCustomers: waitingCustomers??this.waitingCustomers,
@@ -34,6 +38,7 @@ class WaitingCustomerState {
       deleteCustomerState: deleteCustomerState??this.deleteCustomerState,
       getCustomersState: getCustomersState?? this.getCustomersState,
       errorMessage: errorMessage??this.errorMessage,
+      isSelectionMode: isSelectionMode??this.isSelectionMode,
     );
   }
 }

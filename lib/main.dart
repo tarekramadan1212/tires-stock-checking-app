@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => state.isInvited
                     ? const CompleteProfileScreen()
-                    : const HomePage(),
+                    : HomePage(),
               ),
                   (route) => false,
             );
