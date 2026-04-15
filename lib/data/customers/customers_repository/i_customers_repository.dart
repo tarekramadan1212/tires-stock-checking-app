@@ -16,6 +16,9 @@ abstract class ICustomersRepo {
   });
 
   Future<Either<CustomFailure, WaitingCustomerModel>> deleteWaitingCustomer({
-    required String customerId,
+    required int customerId,
   });
+
+  Future<Either<CustomFailure, List<WaitingCustomerModel>>>
+  deleteSeveralWaitingCustomers({required List<int> selectedCustomersIds});
 }

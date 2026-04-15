@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/data/customers/customers_datasource/I_customers_datasource.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
@@ -20,7 +21,7 @@ class CustomersDatasourceImpl implements ICustomersDatasource {
   }
 
   @override
-  Future<WaitingCustomerModel> deleteWaitingCustomer({required String customerId}) async {
+  Future<WaitingCustomerModel> deleteWaitingCustomer({required int customerId}) async {
     final data = await client.from('waiting_customers').delete().eq('id', customerId).select();
     if(data.isNotEmpty) return WaitingCustomerModel.fromJson(data.first);
     throw Exception('Something went wrong');
@@ -58,5 +59,11 @@ class CustomersDatasourceImpl implements ICustomersDatasource {
     if(originalModel.tireBrand != updatedModel.tireBrand)changes['brand'] = updatedModel.tireBrand;
     if(originalModel.notes != updatedModel.notes)changes['notes'] = updatedModel.notes;
     return changes;
+  }
+
+  @override
+  Future<List<WaitingCustomerModel>> deleteSeveralWaitingCustomers({required List<int> selectedCustomersIds}) async{
+    final data = await client.from('waiting_customers').delete().inFilter('id', selectedCustomersIds).select();
+    return data.map((item) =>WaitingCustomerModel.fromJson(item)).toList();
   }
 }

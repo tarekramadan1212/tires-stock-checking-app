@@ -10,6 +10,7 @@ class WaitingCustomerState {
   final BlocStates deleteCustomerState;
   final String? errorMessage;
   final bool isSelectionMode;
+  final List<int> selectedCustomers;
 
 
   WaitingCustomerState({
@@ -20,6 +21,7 @@ class WaitingCustomerState {
     this.getCustomersState = BlocStates.initial,
     this.errorMessage,
     this.isSelectionMode = false,
+    this.selectedCustomers = const []
   });
 
   WaitingCustomerState copyWith({
@@ -30,6 +32,7 @@ class WaitingCustomerState {
     BlocStates? getCustomersState,
     String? errorMessage,
     bool? isSelectionMode,
+    List<int>? selectedCustomers
   }) {
     return WaitingCustomerState(
       waitingCustomers: waitingCustomers??this.waitingCustomers,
@@ -39,6 +42,7 @@ class WaitingCustomerState {
       getCustomersState: getCustomersState?? this.getCustomersState,
       errorMessage: errorMessage??this.errorMessage,
       isSelectionMode: isSelectionMode??this.isSelectionMode,
+      selectedCustomers: selectedCustomers??this.selectedCustomers,
     );
   }
 }

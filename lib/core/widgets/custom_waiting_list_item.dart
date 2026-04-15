@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
@@ -15,112 +16,131 @@ class CustomWaitingListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme theme = Theme.of(context).textTheme;
     final cubit = context.read<WaitingListCubit>();
-    return InkWell(
-      onTap: () {
-        //TODO: if (state.isSelectionMode) execute delete helper method
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => AddCustomerScreen(customer: customerModel),
-          ),
-        );
-      },
-      onLongPress: ()
-      {
-        cubit.toggleSelectionMode();
-      },
-      child: SizedBox(
-        width: double.infinity,
-        child: Card(
-          color: Theme.of(context).colorScheme.surface,
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: BlocBuilder<WaitingListCubit, WaitingCustomerState>(
-              builder: (context,state) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(child: state.isSelectionMode? Icon(Icons.check_box_outline_blank, color: AppColors.primarySeed,):null),
-                    const SizedBox(width: 4.0,),
-                    Expanded(
-                      child: Row(
-                        spacing: 5.6,
-                        children: [
-                          CircleAvatar(
-                            radius: 32,
-                            backgroundColor: AppColors.primarySeed.withValues(
-                              alpha: 0.5,
-                            ),
-                            child: Text(customerModel.customerName[0]),
-                          ),
-                          Flexible(
-                            child: Column(
-                              spacing: 3,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  customerModel.customerName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.titleMedium,
+    return BlocBuilder<WaitingListCubit,WaitingCustomerState>(
+      builder: (context, state) {
+        return InkWell(
+          onTap: () {
+            if(state.isSelectionMode)
+              {
+                cubit.selectItem(id: customerModel.id!);
+              }
+            else
+              {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AddCustomerScreen(customer: customerModel),
+                  ),
+                );
+              }
+          },
+          onLongPress: ()
+          {
+            cubit.toggleSelectionMode();
+            cubit.selectItem(id: customerModel.id!);
+          },
+          child: SizedBox(
+            width: double.infinity,
+            child: Card(
+              color: Theme.of(context).colorScheme.surface,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: BlocBuilder<WaitingListCubit, WaitingCustomerState>(
+                  builder: (context,state) {
+                    Widget? selectTrailingIcon()
+                    {
+                      if(!state.isSelectionMode) return null;
+                       final isSelected = state.selectedCustomers.contains(customerModel.id);
+                      return Icon(
+                        isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                        color: AppColors.primarySeed,
+                      );                    }
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(child: selectTrailingIcon(),),
+                        const SizedBox(width: 4.0,),
+                        Expanded(
+                          child: Row(
+                            spacing: 5.6,
+                            children: [
+                              CircleAvatar(
+                                radius: 32,
+                                backgroundColor: AppColors.primarySeed.withValues(
+                                  alpha: 0.5,
                                 ),
-                                Text(
-                                  customerModel.tireSize,
-                                  style: theme.displayMedium,
-                                ),
-                                Row(
-                                  spacing: 2,
+                                child: Text(customerModel.customerName[0]),
+                              ),
+                              Flexible(
+                                child: Column(
+                                  spacing: 3,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.phone, size: 16),
                                     Text(
-                                      customerModel.phoneNumber,
-                                      style: theme.displaySmall,
+                                      customerModel.customerName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: theme.titleMedium,
+                                    ),
+                                    Text(
+                                      customerModel.tireSize,
+                                      style: theme.displayMedium,
+                                    ),
+                                    Row(
+                                      spacing: 2,
+                                      children: [
+                                        Icon(Icons.phone, size: 16),
+                                        Text(
+                                          customerModel.phoneNumber,
+                                          style: theme.displaySmall,
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 2.0,),
-
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 2.1,
-                        horizontal: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primarySeed.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: DropdownButton<WaitingCustomerStatus>(
-                        value: WaitingCustomerStatus.pending,
-                        underline: Container(),
-                        items: WaitingCustomerStatus.values.map((
-                          WaitingCustomerStatus status,
-                        ) {
-                          return DropdownMenuItem<WaitingCustomerStatus>(
-                            value: status,
-                            child: Text(
-                              status.label,
-                              style: theme.displayMedium!.copyWith(
-                                color: status.color,
                               ),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (WaitingCustomerStatus? newValue) {},
-                      ),
-                    ),
-                  ],
-                );
-              }
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 2.0,),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2.1,
+                            horizontal: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primarySeed.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: DropdownButton<WaitingCustomerStatus>(
+                            value: WaitingCustomerStatus.pending,
+                            underline: Container(),
+                            items: WaitingCustomerStatus.values.map((
+                              WaitingCustomerStatus status,
+                            ) {
+                              return DropdownMenuItem<WaitingCustomerStatus>(
+                                value: status,
+                                child: Text(
+                                  status.label,
+                                  style: theme.displayMedium!.copyWith(
+                                    color: status.color,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (WaitingCustomerStatus? newValue) {},
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }

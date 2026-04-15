@@ -45,7 +45,7 @@ class CustomersRepositoryImpl implements ICustomersRepo {
 
   @override
   Future<Either<CustomFailure, WaitingCustomerModel>> deleteWaitingCustomer({
-    required String customerId,
+    required int customerId,
   }) async {
     return _repoHandler(() async {
       return await datasource.deleteWaitingCustomer(customerId: customerId);
@@ -70,6 +70,13 @@ class CustomersRepositoryImpl implements ICustomersRepo {
         originalModel: originalModel,
         updatedModel: updatedModel,
       );
+    });
+  }
+
+  @override
+  Future<Either<CustomFailure, List<WaitingCustomerModel>>> deleteSeveralWaitingCustomers({required List<int> selectedCustomersIds}) {
+    return _repoHandler(() async {
+      return await datasource.deleteSeveralWaitingCustomers(selectedCustomersIds: selectedCustomersIds);
     });
   }
 }

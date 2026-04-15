@@ -85,26 +85,52 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
         });
   }
 
-  Future<void> deleteCustomer({required String customerId}) async {
+  Future<void> deleteSingleCustomer() async {
     emit(state.copyWith(deleteCustomerState: BlocStates.loading));
     final result = await repository.deleteWaitingCustomer(
-        customerId: customerId);
+        customerId: state.selectedCustomers[0]);
     result.fold((failure) =>
         emit(state.copyWith(
         deleteCustomerState: BlocStates.error,
         errorMessage: failure.message)), (data){
-      state.waitingCustomers.remove(data);
       emit(state.copyWith(
-        waitingCustomers: state.waitingCustomers,
+        waitingCustomers: state.waitingCustomers.where((element) => element.id != data.id).toList(),
         deleteCustomerState: BlocStates.success,
       ));
     });
   }
 
-  bool isSelectionMode = false;
+  Future<void> deleteSeveralCustomers() async {
+    emit(state.copyWith(deleteCustomerState: BlocStates.loading));
+    final result = await repository.deleteSeveralWaitingCustomers(selectedCustomersIds: state.selectedCustomers);
+
+    result.fold((failure) =>
+        emit(state.copyWith(
+        deleteCustomerState: BlocStates.error,
+        errorMessage: failure.message)), (data){
+      final deletedIds = data.map((customer) => customer.id).toSet();
+      final newList = state.waitingCustomers.where((customer) => !deletedIds.contains(customer.id)).toList();
+      emit(state.copyWith(
+        waitingCustomers: newList,
+        deleteCustomerState: BlocStates.success,
+      ));
+    });
+  }
+
   void toggleSelectionMode() {
-    isSelectionMode = !isSelectionMode;
-    emit(state.copyWith(isSelectionMode: isSelectionMode));
+    final newMode = !state.isSelectionMode;
+    emit(state.copyWith(isSelectionMode: newMode, selectedCustomers: newMode?state.selectedCustomers:[]));
+  }
+
+  void selectItem({required int id})
+  {
+    if(state.selectedCustomers.contains(id))
+      {
+        emit(state.copyWith(selectedCustomers: state.selectedCustomers.where((element) => element != id).toList()));
+      } else
+        {
+          emit(state.copyWith(selectedCustomers: [...state.selectedCustomers, id]));
+        }
   }
 
 
