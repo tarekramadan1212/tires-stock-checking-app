@@ -115,7 +115,7 @@ class CustomWaitingListItem extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.primarySeed.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child:
                           BlocBuilder<
@@ -137,8 +137,7 @@ class CustomWaitingListItem extends StatelessWidget {
                                 items: WaitingCustomerStatus.values.map((
                                     WaitingCustomerStatus status,) {
                                   return DropdownMenuItem<
-                                      WaitingCustomerStatus
-                                  >(
+                                      WaitingCustomerStatus>(
                                     value: status,
                                     child: Text(
                                       status.label,

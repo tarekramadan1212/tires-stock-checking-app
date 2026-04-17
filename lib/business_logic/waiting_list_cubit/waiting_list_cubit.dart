@@ -17,6 +17,7 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
   }
 
   Future<void> getWaitingCustomers() async {
+    if (state.waitingCustomers.isNotEmpty) return;
     emit(state.copyWith(getCustomersState: BlocStates.loading));
     final result = await repository.getAllWaitingCustomers();
     result.fold(
@@ -181,7 +182,6 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
         ),
       ),
       (newStatus) {
-        print('New Status: $newStatus');
         List<WaitingCustomerModel> newList = List.from(state.waitingCustomers);
         final index = newList.indexWhere((element) => element.id == id);
         newList[index] = newList[index].copyWith(status: newStatus);
