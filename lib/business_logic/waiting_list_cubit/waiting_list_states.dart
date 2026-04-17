@@ -13,6 +13,7 @@ class WaitingCustomerState {
   final bool isSelectionMode;
   final List<int> selectedCustomers;
   final String? customerStatus;
+  final String searchQuery;
 
 
   WaitingCustomerState({
@@ -26,7 +27,19 @@ class WaitingCustomerState {
     this.isSelectionMode = false,
     this.selectedCustomers = const [],
     this.customerStatus,
+    this.searchQuery = '',
   });
+
+  List<WaitingCustomerModel> get filteredCustomers
+  {
+    if(searchQuery.isEmpty) return waitingCustomers;
+    return waitingCustomers.where((customer){
+      final name = customer.customerName.toLowerCase();
+      final size = customer.tireSize.toLowerCase();
+      final query = searchQuery.toLowerCase();
+      return name.contains(query) || size.contains(query);
+    }).toList();
+  }
 
   WaitingCustomerState copyWith({
     List<WaitingCustomerModel>? waitingCustomers,
@@ -39,6 +52,7 @@ class WaitingCustomerState {
     List<int>? selectedCustomers,
     BlocStates? changeCustomerStatusState,
     String? customerStatus,
+    String? searchQuery,
   }) {
     return WaitingCustomerState(
       waitingCustomers: waitingCustomers??this.waitingCustomers,
@@ -51,6 +65,7 @@ class WaitingCustomerState {
       selectedCustomers: selectedCustomers??this.selectedCustomers,
       changeCustomerStatusState: changeCustomerStatusState??this.changeCustomerStatusState,
       customerStatus: customerStatus??this.customerStatus,
+      searchQuery: searchQuery??this.searchQuery,
     );
   }
 }

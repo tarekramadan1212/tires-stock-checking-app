@@ -14,26 +14,23 @@ class WaitingListScreen extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0, left: 5.0, right: 5.0),
       child: Column(
         children: [
-          CustomTextField(hintText: 'Search Customer Name'),
+          CustomTextField(
+              hintText: 'Search Customer Name',
+            onChanged: (value)
+            {
+              context.read<WaitingListCubit>().searchCustomers(value);
+            },
+          ),
           const SizedBox(height: 10,),
           Expanded(
-            child: BlocConsumer<WaitingListCubit, WaitingCustomerState>(
-              listener: (context, state){
-                if(state.getCustomersState == BlocStates.success)
-                  {
-                    print('success');
-                    print('DATA From The Whole List itself: ${state.waitingCustomers[0].id}');
-                  }
-                else if(state.getCustomersState == BlocStates.error)
-                  {
-                    print('Error -- ${state.errorMessage}');
-                  }
-                else if(state.getCustomersState == BlocStates.loading)
-                  {
-                    print('loading');
-                  }
-              },
+            child: BlocBuilder<WaitingListCubit, WaitingCustomerState>(
               builder: (context, state) {
+                final customers = state.filteredCustomers;
+
+                if(customers.isEmpty && state.searchQuery.isNotEmpty) {
+                  return const Center(child: Text("No customers match your search."));
+                }
+
                 if(state.getCustomersState == BlocStates.loading)
                   {
                     return Center(child: CircularProgressIndicator());
@@ -45,9 +42,9 @@ class WaitingListScreen extends StatelessWidget {
                 else
                   {
                     return ListView.builder(itemBuilder: (context, index) {
-                      return CustomWaitingListItem(customerModel: state.waitingCustomers[index]);
+                      return CustomWaitingListItem(customerModel: customers[index]);
                     },
-                      itemCount: state.waitingCustomers.length,
+                      itemCount: customers.length,
                     );
                   }
 

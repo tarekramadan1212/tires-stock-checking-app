@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
     this.focusedBorder,
     this.enabledBorder,
     this.keyboardType,
+    this.onChanged,
     super.key,
   });
 
@@ -29,7 +30,7 @@ class CustomTextField extends StatelessWidget {
   final InputBorder? focusedBorder;
   final InputBorder? enabledBorder;
   final TextInputType? keyboardType;
-
+  final void Function(String)? onChanged;
 
 
   @override
@@ -41,6 +42,7 @@ class CustomTextField extends StatelessWidget {
       maxLines: maxLines??1,
       maxLength: maxLength,
       obscureText: obscureText??false,
+      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: prefixIcon,

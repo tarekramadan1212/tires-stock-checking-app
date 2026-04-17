@@ -195,4 +195,8 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
       },
     );
   }
+
+  void searchCustomers(String query) {
+    emit(state.copyWith(searchQuery: query));
+  }
 }

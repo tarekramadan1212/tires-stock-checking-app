@@ -49,6 +49,7 @@ class WaitingCustomerModel {
   }
 
   WaitingCustomerModel copyWith({
+    int?id,
     String? status,
     String? branchId,
     String? createdAt,
@@ -59,6 +60,7 @@ class WaitingCustomerModel {
     String? notes,
   }) {
     return WaitingCustomerModel(
+      id: id??this.id,
       status: status??this.status,
       branchId: branchId??this.branchId,
       createdAt: createdAt??this.createdAt,
