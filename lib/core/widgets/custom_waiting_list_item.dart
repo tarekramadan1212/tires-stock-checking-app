@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
@@ -14,61 +13,66 @@ class CustomWaitingListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme theme = Theme.of(context).textTheme;
+    final TextTheme theme = Theme
+        .of(context)
+        .textTheme;
     final cubit = context.read<WaitingListCubit>();
-    return BlocBuilder<WaitingListCubit,WaitingCustomerState>(
+    return BlocBuilder<WaitingListCubit, WaitingCustomerState>(
       builder: (context, state) {
         return InkWell(
           onTap: () {
-            if(state.isSelectionMode)
-              {
-                cubit.selectItem(id: customerModel.id!);
-              }
-            else
-              {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AddCustomerScreen(customer: customerModel),
-                  ),
-                );
-              }
+            if (state.isSelectionMode) {
+              cubit.selectItem(id: customerModel.id!);
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AddCustomerScreen(customer: customerModel),
+                ),
+              );
+            }
           },
-          onLongPress: ()
-          {
+          onLongPress: () {
             cubit.toggleSelectionMode();
             cubit.selectItem(id: customerModel.id!);
           },
           child: SizedBox(
             width: double.infinity,
             child: Card(
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme
+                  .of(context)
+                  .colorScheme
+                  .surface,
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: BlocBuilder<WaitingListCubit, WaitingCustomerState>(
-                  builder: (context,state) {
-                    Widget? selectTrailingIcon()
-                    {
-                      if(!state.isSelectionMode) return null;
-                       final isSelected = state.selectedCustomers.contains(customerModel.id);
+                  builder: (context, state) {
+                    Widget? selectTrailingIcon() {
+                      if (!state.isSelectionMode) return null;
+                      final isSelected = state.selectedCustomers.contains(
+                        customerModel.id,
+                      );
                       return Icon(
-                        isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                        isSelected
+                            ? Icons.check_box
+                            : Icons.check_box_outline_blank,
                         color: AppColors.primarySeed,
-                      );                    }
+                      );
+                    }
+
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(child: selectTrailingIcon(),),
-                        const SizedBox(width: 4.0,),
+                        SizedBox(child: selectTrailingIcon()),
+                        const SizedBox(width: 4.0),
                         Expanded(
                           child: Row(
                             spacing: 5.6,
                             children: [
                               CircleAvatar(
                                 radius: 32,
-                                backgroundColor: AppColors.primarySeed.withValues(
-                                  alpha: 0.5,
-                                ),
+                                backgroundColor: AppColors.primarySeed
+                                    .withValues(alpha: 0.5),
                                 child: Text(customerModel.customerName[0]),
                               ),
                               Flexible(
@@ -102,7 +106,7 @@ class CustomWaitingListItem extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 2.0,),
+                        const SizedBox(width: 2.0),
 
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -113,43 +117,71 @@ class CustomWaitingListItem extends StatelessWidget {
                             color: AppColors.primarySeed.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(5),
                           ),
-                          child: DropdownButton<WaitingCustomerStatus>(
-                            value: WaitingCustomerStatus.pending,
-                            underline: Container(),
-                            items: WaitingCustomerStatus.values.map((
-                              WaitingCustomerStatus status,
-                            ) {
-                              return DropdownMenuItem<WaitingCustomerStatus>(
-                                value: status,
-                                child: Text(
-                                  status.label,
-                                  style: theme.displayMedium!.copyWith(
-                                    color: status.color,
-                                  ),
-                                ),
+                          child:
+                          BlocBuilder<
+                              WaitingListCubit,
+                              WaitingCustomerState
+                          >(
+                            builder: (context, state) {
+                              final currentItem = state.waitingCustomers
+                                  .firstWhere(
+                                    (element) =>
+                                element.id == customerModel.id,
+                                orElse: () => customerModel,
                               );
-                            }).toList(),
-                            onChanged: (WaitingCustomerStatus? newValue) {},
+                              return DropdownButton<WaitingCustomerStatus>(
+                                value: WaitingCustomerStatus.values.byName(
+                                  currentItem.status!,
+                                ),
+                                underline: Container(),
+                                items: WaitingCustomerStatus.values.map((
+                                    WaitingCustomerStatus status,) {
+                                  return DropdownMenuItem<
+                                      WaitingCustomerStatus
+                                  >(
+                                    value: status,
+                                    child: Text(
+                                      status.label,
+                                      style: theme.displayMedium!.copyWith(
+                                        color: status.color,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged:
+                                    (WaitingCustomerStatus? newValue) {
+                                  if (newValue != null &&
+                                      newValue.label !=
+                                          currentItem.status) {
+                                    cubit.changeCustomerStatusData(
+                                      preStatus: currentItem.status!,
+                                      status: newValue.name,
+                                      id: currentItem.id!,
+                                    );
+                                  }
+                                },
+                              );
+                            },
                           ),
                         ),
                       ],
                     );
-                  }
+                  },
                 ),
               ),
             ),
           ),
         );
-      }
+      },
     );
   }
 }
 
 enum WaitingCustomerStatus {
-  pending('Pending', Colors.orange),
-  notified('Notified', Colors.green),
-  cancelled('Cancelled', Colors.red),
-  completed('Completed', Colors.blue);
+  pending('pending', Colors.orange),
+  notified('notified', Colors.green),
+  cancelled('cancelled', Colors.red),
+  completed('completed', Colors.blue);
 
   final String label;
   final Color color;

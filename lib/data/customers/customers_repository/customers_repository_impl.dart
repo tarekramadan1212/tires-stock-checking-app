@@ -79,4 +79,11 @@ class CustomersRepositoryImpl implements ICustomersRepo {
       return await datasource.deleteSeveralWaitingCustomers(selectedCustomersIds: selectedCustomersIds);
     });
   }
+
+  @override
+  Future<Either<CustomFailure, String>> changeCustomerStatus({required String status, required int id}) async{
+    return _repoHandler(() async {
+      return await datasource.changeCustomerStatus(status: status, id: id);
+    });
+  }
 }

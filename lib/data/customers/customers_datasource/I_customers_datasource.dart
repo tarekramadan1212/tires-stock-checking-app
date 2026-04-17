@@ -16,5 +16,7 @@ abstract class ICustomersDatasource {
 
   Future<List<WaitingCustomerModel>>deleteSeveralWaitingCustomers(
       {required List<int> selectedCustomersIds});
+
+  Future<String> changeCustomerStatus({required String status, required int id});
   //TODO: Search Method for customers.
 }

@@ -66,4 +66,10 @@ class CustomersDatasourceImpl implements ICustomersDatasource {
     final data = await client.from('waiting_customers').delete().inFilter('id', selectedCustomersIds).select();
     return data.map((item) =>WaitingCustomerModel.fromJson(item)).toList();
   }
+
+  @override
+  Future<String> changeCustomerStatus({required String status, required int id}) async{
+    final data = await client.from('waiting_customers').update({'status': status}).eq('id', id).select('status').single();
+    return data['status'].toString();
+  }
 }

@@ -8,9 +8,11 @@ class WaitingCustomerState {
   final BlocStates addCustomerState;
   final BlocStates updateCustomerState;
   final BlocStates deleteCustomerState;
+  final BlocStates changeCustomerStatusState;
   final String? errorMessage;
   final bool isSelectionMode;
   final List<int> selectedCustomers;
+  final String? customerStatus;
 
 
   WaitingCustomerState({
@@ -19,9 +21,11 @@ class WaitingCustomerState {
     this.updateCustomerState = BlocStates.initial,
     this.deleteCustomerState = BlocStates.initial,
     this.getCustomersState = BlocStates.initial,
+    this.changeCustomerStatusState = BlocStates.initial,
     this.errorMessage,
     this.isSelectionMode = false,
-    this.selectedCustomers = const []
+    this.selectedCustomers = const [],
+    this.customerStatus,
   });
 
   WaitingCustomerState copyWith({
@@ -32,7 +36,9 @@ class WaitingCustomerState {
     BlocStates? getCustomersState,
     String? errorMessage,
     bool? isSelectionMode,
-    List<int>? selectedCustomers
+    List<int>? selectedCustomers,
+    BlocStates? changeCustomerStatusState,
+    String? customerStatus,
   }) {
     return WaitingCustomerState(
       waitingCustomers: waitingCustomers??this.waitingCustomers,
@@ -43,6 +49,8 @@ class WaitingCustomerState {
       errorMessage: errorMessage??this.errorMessage,
       isSelectionMode: isSelectionMode??this.isSelectionMode,
       selectedCustomers: selectedCustomers??this.selectedCustomers,
+      changeCustomerStatusState: changeCustomerStatusState??this.changeCustomerStatusState,
+      customerStatus: customerStatus??this.customerStatus,
     );
   }
 }

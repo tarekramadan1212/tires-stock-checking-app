@@ -1,6 +1,3 @@
-
-enum CustomerStatus { cancelled, pending, notified, completed }
-
 class WaitingCustomerModel {
   final int? id;
   final String createdAt;
@@ -9,7 +6,7 @@ class WaitingCustomerModel {
   final String tireSize;
   final String tireBrand;
   final String notes;
-  final CustomerStatus? status;
+  final String? status;
   final String branchId;
 
   const WaitingCustomerModel({
@@ -32,9 +29,9 @@ class WaitingCustomerModel {
       tireSize: json['tire_size'],
       tireBrand: json['brand'],
       notes: json['notes'],
-      status: json['status'] == null ?CustomerStatus.pending: CustomerStatus.values.byName(json['status']),
+      status: json['status'] ?? 'pending',
       createdAt: json['created_at'],
-      branchId: json['branch_id']
+      branchId: json['branch_id'],
     );
   }
 
@@ -46,8 +43,30 @@ class WaitingCustomerModel {
       'tire_size': tireSize,
       'brand': tireBrand,
       'notes': notes,
-      'status': status?.name??'pending',
+      'status': status ?? 'pending',
       'created_at': createdAt,
     };
+  }
+
+  WaitingCustomerModel copyWith({
+    String? status,
+    String? branchId,
+    String? createdAt,
+    String? customerName,
+    String? phoneNumber,
+    String? tireSize,
+    String? tireBrand,
+    String? notes,
+  }) {
+    return WaitingCustomerModel(
+      status: status??this.status,
+      branchId: branchId??this.branchId,
+      createdAt: createdAt??this.createdAt,
+      customerName: customerName??this.customerName,
+      phoneNumber: phoneNumber??this.phoneNumber,
+      tireSize: tireSize??this.tireSize,
+      tireBrand: tireBrand??this.tireBrand,
+      notes: notes??this.notes,
+    );
   }
 }

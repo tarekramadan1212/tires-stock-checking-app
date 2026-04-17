@@ -210,7 +210,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             tireSize: _sizeController.text,
                             tireBrand: _brandController.text,
                             notes: _notesController.text,
-                            status: widget.customer?.status?? CustomerStatus.pending,
+                            status: widget.customer?.status??'pending',
                             createdAt: widget.customer?.createdAt?? DateTime.now().toString(),
                           );
 

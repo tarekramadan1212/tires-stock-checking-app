@@ -21,4 +21,7 @@ abstract class ICustomersRepo {
 
   Future<Either<CustomFailure, List<WaitingCustomerModel>>>
   deleteSeveralWaitingCustomers({required List<int> selectedCustomersIds});
+
+  Future<Either<CustomFailure, String>> changeCustomerStatus({required String status, required int id});
+
 }
