@@ -6,7 +6,7 @@ class TiresItemWidget extends StatelessWidget {
     required this.model, super.key,
   });
 
-  final TireModel model;
+  final MockTireModel model;
 
   @override
   Widget build(BuildContext context) {

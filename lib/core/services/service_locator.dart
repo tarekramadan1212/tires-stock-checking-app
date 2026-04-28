@@ -33,4 +33,6 @@ Future<void> setUpServiceLocator()async
 
   sl.registerLazySingleton<WaitingListCubit>(() => WaitingListCubit(repository: sl()));
 
+  ///Stock Services
+
 }
