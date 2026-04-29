@@ -15,6 +15,7 @@ class CustomTextField extends StatelessWidget {
     this.enabledBorder,
     this.keyboardType,
     this.onChanged,
+    this.onFieldSubmitted,
     super.key,
   });
 
@@ -31,6 +32,7 @@ class CustomTextField extends StatelessWidget {
   final InputBorder? enabledBorder;
   final TextInputType? keyboardType;
   final void Function(String)? onChanged;
+  final void Function(String)? onFieldSubmitted;
 
 
   @override
@@ -43,6 +45,7 @@ class CustomTextField extends StatelessWidget {
       maxLength: maxLength,
       obscureText: obscureText??false,
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: prefixIcon,

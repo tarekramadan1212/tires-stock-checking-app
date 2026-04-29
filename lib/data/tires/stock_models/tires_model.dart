@@ -1,7 +1,7 @@
 class TireModel {
   final String brand;
   final String size;
-  final double price;
+  final int price;
   final int quantity;
 
   TireModel({
