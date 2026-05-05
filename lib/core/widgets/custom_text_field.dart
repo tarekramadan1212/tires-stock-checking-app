@@ -16,6 +16,7 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType,
     this.onChanged,
     this.onFieldSubmitted,
+    this.textInputAction,
     super.key,
   });
 
@@ -33,11 +34,13 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
+  final TextInputAction? textInputAction;
 
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      textInputAction: textInputAction,
       keyboardType: keyboardType,
       validator: validator,
       controller: controller,

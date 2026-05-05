@@ -92,6 +92,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   ),
                 ),
                 CustomTextField(
+                  textInputAction: TextInputAction.next,
                   hintText: 'Customer Name',
                   controller: _customerNameController,
                 ),
@@ -104,6 +105,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   ),
                 ),
                 CustomTextField(
+                  textInputAction: TextInputAction.next,
                   hintText: 'Phone Number',
                   controller: _phoneController,
                 ),
@@ -116,6 +118,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   ),
                 ),
                 CustomTextField(
+                  textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.datetime,
                   hintText: '215/55/17',
                   controller: _sizeController,
@@ -129,6 +132,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   ),
                 ),
                 CustomTextField(
+                  textInputAction: TextInputAction.next,
                   hintText: 'Michelin',
                   controller: _brandController,
                 ),
@@ -169,6 +173,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   ),
                 ),
                 CustomTextField(
+                  textInputAction: TextInputAction.done,
                   hintText: 'Additional Details ....',
                   maxLines: 4,
                   maxLength: 300,
@@ -196,7 +201,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                         }
                       else if(state.addCustomerState == BlocStates.loading || state.updateCustomerState == BlocStates.loading)
                         {
-                          print('loading inside the Add Screen');
                         }
                     },
                     builder: (context, state) {

@@ -53,7 +53,7 @@ class TiresItemWidget extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                            color: Colors.deepOrangeAccent.withValues(alpha: 0.8),
+                            color: AppColors.secondaryColor.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(

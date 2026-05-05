@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_events.dart';
+import 'package:supreme/business_logic/waiting_list_cubit/waiting_list_states.dart';
 import 'package:supreme/core/app_cubit/app_cubit.dart';
 import 'package:supreme/core/app_cubit/app_states.dart';
-
+import '../business_logic/waiting_list_cubit/waiting_list_cubit.dart';
 import 'auth/change_password.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -71,9 +72,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // --- STATS ROW ---
           Row(
             children: [
-              const StatusCard(value: "128", label: "Customers Served", icon: Icons.people),
+              StatusCard(value: _customersLengthHelper(context: context), label: "Customers Served", icon: Icons.people),
               const SizedBox(width: 16),
-              const StatusCard(value: "8.5h", label: "Active Hours", icon: Icons.access_time),
+              const StatusCard(value: "13", label: "Working Hours", icon: Icons.access_time_filled),
             ],
           ),
 
@@ -247,4 +248,20 @@ class StatusCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _customersLengthHelper({required BuildContext context})
+{
+  if(context.read<WaitingListCubit>().state.getCustomersState == BlocStates.success)
+    {
+      return '${context.read<WaitingListCubit>().state.waitingCustomers.length}';
+    }
+  else if(context.read<WaitingListCubit>().state.getCustomersState == BlocStates.loading)
+    {
+      return 'Loading...';
+    }
+  else
+    {
+      return 'Error..';
+    }
 }

@@ -72,8 +72,8 @@ class CustomWaitingListItem extends StatelessWidget {
                               CircleAvatar(
                                 radius: 32,
                                 backgroundColor: AppColors.primarySeed
-                                    .withValues(alpha: 0.5),
-                                child: Text(customerModel.customerName[0]),
+                                    .withValues(alpha: 0.6),
+                                child: Text(customerModel.customerName[0],style: TextStyle(fontSize: 22),),
                               ),
                               Flexible(
                                 child: Column(
@@ -84,11 +84,11 @@ class CustomWaitingListItem extends StatelessWidget {
                                       customerModel.customerName,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: theme.titleMedium,
+                                      style: theme.titleMedium!.copyWith(color: Colors.grey.shade700),
                                     ),
                                     Text(
                                       customerModel.tireSize,
-                                      style: theme.displayMedium,
+                                      style: theme.displayMedium!.copyWith(color: AppColors.primarySeed),
                                     ),
                                     Row(
                                       spacing: 2,

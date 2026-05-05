@@ -8,14 +8,13 @@ import '../core/services/service_locator.dart';
 
 class TiresStockScreen extends StatelessWidget {
   const TiresStockScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(7.0),
-        child: BlocProvider(
-          create: (_) => sl<StockCubit>(),
+        child: BlocProvider.value(
+          value: sl<StockCubit>(),
           child: Builder(
             builder: (secondContext) {
               return Column(
@@ -34,6 +33,11 @@ class TiresStockScreen extends StatelessWidget {
                   Expanded(
                     child: BlocBuilder<StockCubit, StockState>(
                       builder: (context, state) {
+
+                        if(state.getTiresStatus == CubitStatus.initial)
+                          {
+                            return const InitialSearchState();
+                          }
                         if (state.getTiresStatus == CubitStatus.loading)
                         {
                           return const Center(child: CircularProgressIndicator());
@@ -56,6 +60,40 @@ class TiresStockScreen extends StatelessWidget {
             }
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class InitialSearchState extends StatelessWidget {
+  const InitialSearchState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.search_rounded,
+            size: 80,
+            color: Colors.grey.shade300,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Ready to roll?',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Enter a tire size above to start searching.',
+            style: TextStyle(color: Colors.grey.shade500),
+          ),
+        ],
       ),
     );
   }
