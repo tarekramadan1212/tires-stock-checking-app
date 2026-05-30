@@ -17,6 +17,7 @@ class CustomTextField extends StatelessWidget {
     this.onChanged,
     this.onFieldSubmitted,
     this.textInputAction,
+    this.fillColor,
     super.key,
   });
 
@@ -35,7 +36,7 @@ class CustomTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
   final TextInputAction? textInputAction;
-
+  final Color? fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class CustomTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         filled: true,
-        fillColor: Colors.grey[270],
+        fillColor: fillColor??Colors.grey[270],
       ),
     );
   }

@@ -4,10 +4,11 @@ class WaitingCustomerModel {
   final String customerName;
   final String phoneNumber;
   final String tireSize;
-  final String tireBrand;
+  final List<String> tireBrand;
   final String notes;
   final String? status;
   final String branchId;
+  final List<String> prices;
 
   const WaitingCustomerModel({
     this.id,
@@ -19,6 +20,7 @@ class WaitingCustomerModel {
     required this.status,
     required this.createdAt,
     required this.branchId,
+    required this.prices,
   });
 
   factory WaitingCustomerModel.fromJson(Map<String, dynamic> json) {
@@ -27,11 +29,12 @@ class WaitingCustomerModel {
       customerName: json['customer_name'],
       phoneNumber: json['phone'],
       tireSize: json['tire_size'],
-      tireBrand: json['brand'],
+      tireBrand: List<String>.from(json['brand']??[]),
       notes: json['notes'],
       status: json['status'] ?? 'pending',
       createdAt: json['created_at'],
       branchId: json['branch_id'],
+      prices: List<String>.from(json['prices']??[]),
     );
   }
 
@@ -45,6 +48,7 @@ class WaitingCustomerModel {
       'notes': notes,
       'status': status ?? 'pending',
       'created_at': createdAt,
+      'prices': prices,
     };
   }
 
@@ -56,8 +60,9 @@ class WaitingCustomerModel {
     String? customerName,
     String? phoneNumber,
     String? tireSize,
-    String? tireBrand,
+    List<String>? tireBrand,
     String? notes,
+    List<String>? prices,
   }) {
     return WaitingCustomerModel(
       id: id??this.id,
@@ -69,6 +74,9 @@ class WaitingCustomerModel {
       tireSize: tireSize??this.tireSize,
       tireBrand: tireBrand??this.tireBrand,
       notes: notes??this.notes,
+      prices: prices??this.prices,
     );
   }
+
+
 }

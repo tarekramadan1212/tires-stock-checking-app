@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/data/customers/customers_datasource/I_customers_datasource.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
