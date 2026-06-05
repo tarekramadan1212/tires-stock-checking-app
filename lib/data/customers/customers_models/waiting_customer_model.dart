@@ -8,7 +8,7 @@ class WaitingCustomerModel {
   final String notes;
   final String? status;
   final String branchId;
-  final List<String> prices;
+  final List<double> prices;
 
   const WaitingCustomerModel({
     this.id,
@@ -34,7 +34,9 @@ class WaitingCustomerModel {
       status: json['status'] ?? 'pending',
       createdAt: json['created_at'],
       branchId: json['branch_id'],
-      prices: List<String>.from(json['prices']??[]),
+      prices: (json['prices'] as List? ?? [])
+          .map((e) => (e as num).toDouble())
+          .toList(),
     );
   }
 
@@ -62,7 +64,7 @@ class WaitingCustomerModel {
     String? tireSize,
     List<String>? tireBrand,
     String? notes,
-    List<String>? prices,
+    List<double>? prices,
   }) {
     return WaitingCustomerModel(
       id: id??this.id,
@@ -77,6 +79,5 @@ class WaitingCustomerModel {
       prices: prices??this.prices,
     );
   }
-
 
 }

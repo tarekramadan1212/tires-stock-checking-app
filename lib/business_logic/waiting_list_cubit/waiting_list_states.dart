@@ -9,6 +9,7 @@ class WaitingCustomerState {
   final BlocStates updateCustomerState;
   final BlocStates deleteCustomerState;
   final BlocStates changeCustomerStatusState;
+  final BlocStates addPriceState;
   final String? errorMessage;
   final bool isSelectionMode;
   final List<int> selectedCustomers;
@@ -23,6 +24,7 @@ class WaitingCustomerState {
     this.deleteCustomerState = BlocStates.initial,
     this.getCustomersState = BlocStates.initial,
     this.changeCustomerStatusState = BlocStates.initial,
+    this.addPriceState = BlocStates.initial,
     this.errorMessage,
     this.isSelectionMode = false,
     this.selectedCustomers = const [],
@@ -47,6 +49,7 @@ class WaitingCustomerState {
     BlocStates? updateCustomerState,
     BlocStates? deleteCustomerState,
     BlocStates? getCustomersState,
+    BlocStates? addPriceState,
     String? errorMessage,
     bool? isSelectionMode,
     List<int>? selectedCustomers,
@@ -60,6 +63,7 @@ class WaitingCustomerState {
       updateCustomerState: updateCustomerState??this.updateCustomerState,
       deleteCustomerState: deleteCustomerState??this.deleteCustomerState,
       getCustomersState: getCustomersState?? this.getCustomersState,
+      addPriceState: addPriceState??this.addPriceState,
       errorMessage: errorMessage??this.errorMessage,
       isSelectionMode: isSelectionMode??this.isSelectionMode,
       selectedCustomers: selectedCustomers??this.selectedCustomers,

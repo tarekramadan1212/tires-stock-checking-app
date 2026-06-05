@@ -71,4 +71,19 @@ class CustomersDatasourceImpl implements ICustomersDatasource {
     final data = await client.from('waiting_customers').update({'status': status}).eq('id', id).select('status').single();
     return data['status'].toString();
   }
+
+  @override
+  Future<List<double>> addPrices({required int id, required List<double> prices}) async {
+    final data = await client
+        .from('waiting_customers')
+        .update({'prices': prices})
+        .eq('id', id)
+        .select('prices')
+        .single();
+
+    // 1. Ensure 'prices' is not null, fallback to an empty list
+    final List<dynamic> rawPrices = data['prices'] ?? [];
+    // 2. Safely parse and map elements to double
+    return rawPrices.map((e) => double.parse(e.toString())).toList();
+  }
 }

@@ -10,5 +10,6 @@ List<String> convertTiresBrandsIntoList({required String tireBrands}) {
       brand += tireBrands[i];
     }
   }
+  if(brands.isEmpty && brand.isNotEmpty) brands.add(brand.trim());
   return brands;
 }

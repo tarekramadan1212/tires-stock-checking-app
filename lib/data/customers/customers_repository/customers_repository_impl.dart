@@ -86,4 +86,11 @@ class CustomersRepositoryImpl implements ICustomersRepo {
       return await datasource.changeCustomerStatus(status: status, id: id);
     });
   }
+
+  @override
+  Future<Either<CustomFailure, List<double>>> addPrices({required int id, required List<double> prices})async {
+    return _repoHandler(() async {
+      return await datasource.addPrices(id: id, prices: prices);
+    });
+  }
 }

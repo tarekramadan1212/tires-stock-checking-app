@@ -24,4 +24,6 @@ abstract class ICustomersRepo {
 
   Future<Either<CustomFailure, String>> changeCustomerStatus({required String status, required int id});
 
+  Future<Either<CustomFailure, List<double>>> addPrices({required int id, required List<double> prices});
+
 }

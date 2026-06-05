@@ -18,5 +18,7 @@ abstract class ICustomersDatasource {
       {required List<int> selectedCustomersIds});
 
   Future<String> changeCustomerStatus({required String status, required int id});
-  //TODO: Search Method for customers.
+
+  Future<List<double>> addPrices({required int id, required List<double> prices});
+
 }

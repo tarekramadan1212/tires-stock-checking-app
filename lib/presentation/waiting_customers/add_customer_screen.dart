@@ -45,7 +45,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
   final TextEditingController _notesController = TextEditingController();
 
-  final TextEditingController _priceController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -54,13 +53,20 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   List<TextEditingController> priceControllers = [];
 
   void updateControllers() {
-    while (_selectedBrands.length > priceControllers.length) {
+    if(widget.customer == null) return;
+    while (widget.customer!.tireBrand.length > priceControllers.length) {
       priceControllers.add(TextEditingController());
     }
-    while (_selectedBrands.length < priceControllers.length) {
+    while (widget.customer!.tireBrand.length < priceControllers.length) {
       priceControllers.last.dispose();
       priceControllers.removeLast();
     }
+    if(widget.customer!.prices.isNotEmpty)
+      {
+        for (int i = 0; i < widget.customer!.prices.length; i++) {
+          priceControllers[i].text = widget.customer!.prices[i].toString();
+        }
+      }
   }
 
   @override
@@ -71,8 +77,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     _sizeController.text = widget.customer?.tireSize ?? '';
     _brandController.text = widget.customer?.tireBrand.join(',') ?? '';
     _selectedBrands = widget.customer?.tireBrand ?? [];
-    updateControllers();
     _notesController.text = widget.customer?.notes ?? '';
+    updateControllers();
   }
 
   @override
@@ -82,7 +88,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     _phoneController.dispose();
     _brandController.dispose();
     _sizeController.dispose();
-    _priceController.dispose();
+    for (var controller in priceControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -133,24 +141,35 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: _selectedBrands.asMap().entries.map((brand) {
+                              children: _selectedBrands
+                                  .asMap()
+                                  .entries
+                                  .map((brand) {
                                 final index = brand.key;
                                 final value = brand.value;
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0),
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: Colors.green.shade400,
                                       borderRadius: BorderRadius.circular(13),
                                     ),
                                     child: ListTile(
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              13)),
                                       title: Text('Price for $value'),
                                       trailing: SizedBox(
                                         width: 100,
                                         child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 2.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 2.0),
                                           child: CustomTextField(
+                                            validator: (value) {
+                                              if (value!.isEmpty) return 'Price is required';
+                                              return null;
+                                            },
                                             keyboardType: TextInputType.number,
                                             controller: priceControllers[index],
                                             hintText: '0.00',
@@ -163,9 +182,31 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                               }).toList(),
                             ),
                           ),
-                          CustomButton(
-                            child: Text('Submit Price'),
-                            onPressed: (){},
+                          BlocConsumer<WaitingListCubit, WaitingCustomerState>(
+                            listener: (context, state) {
+                              if(state.addPriceState == BlocStates.success)showSuccessSnackBar(context, 'Successful action');
+                              if(state.addPriceState == BlocStates.error) {
+                                showErrorSnackBar(context, 'Something went wrong: ${state.errorMessage!}');
+                              }
+                            },
+                              builder: (context, state) {
+                                return CustomButton(
+                                  child: state.addPriceState ==
+                                      BlocStates.loading
+                                      ? CircularProgressIndicator()
+                                      : Text(widget.customer!.prices.isEmpty?'Add Price':'Update Price ... Sure?'),
+                                  onPressed: () {
+                                    if (!_formKey.currentState!.validate()) return;
+                                    //TODO: Submit price to the server
+                                    final List<String> prices = priceControllers
+                                        .map((element) => element.text)
+                                        .toList();
+                                    cubit.addPrice(id: widget.customer!.id!,
+                                        prices: prices.map((element)=> double.parse(element)).toList());
+
+                                  },
+                                );
+                              }
                           ),
                         ],
                       ),
@@ -180,8 +221,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
-                    validator: (value){
-                      if(value!.isEmpty) return 'Customer name is required';
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Customer name is required';
                       return null;
                     },
                     textInputAction: TextInputAction.next,
@@ -197,8 +238,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
-                    validator: (value){
-                      if(value!.isEmpty) return 'Phone number is required';
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Phone number is required';
                       return null;
                     },
                     keyboardType: TextInputType.phone,
@@ -215,8 +256,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
-                    validator: (value){
-                      if(value!.isEmpty) return 'Tire size is required';
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Tire size is required';
                       return null;
                     },
                     textInputAction: TextInputAction.next,
@@ -225,7 +266,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     controller: _sizeController,
                   ),
                   Text(
-                    'Tire Brand',
+                    'Tire Brand (if you did not select from the suggested items and entered more than one brand manually enter comma between them)',
                     style: TextStyle(
                       color: Colors.grey.shade600,
                       fontSize: 16,
@@ -233,8 +274,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
-                    validator: (value){
-                      if(value!.isEmpty) return 'Tire brand is required';
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Tire brand is required';
                       return null;
                     },
                     textInputAction: TextInputAction.next,
@@ -257,7 +298,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                 } else {
                                   _selectedBrands.remove(brand);
                                 }
-                                _brandController.text = _selectedBrands.isNotEmpty
+                                _brandController.text =
+                                _selectedBrands.isNotEmpty
                                     ? '${_selectedBrands.join(', ')},'
                                     : '';
                               });
@@ -307,18 +349,19 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                         } else if (state.addCustomerState == BlocStates.error ||
                             state.updateCustomerState == BlocStates.error) {
                           showErrorSnackBar(context, state.errorMessage!);
-                        } else if (state.addCustomerState == BlocStates.loading ||
+                        } else if (state.addCustomerState ==
+                            BlocStates.loading ||
                             state.updateCustomerState == BlocStates.loading) {}
                       },
                       builder: (context, state) {
                         return ElevatedButton(
                           onPressed: () async {
-
-                            if(!_formKey.currentState!.validate()) return;
+                            if (!_formKey.currentState!.validate()) return;
                             final branchId = context
                                 .read<AuthBloc>()
                                 .userData
                                 .branchId;
+                            print('Brand: ${convertTiresBrandsIntoList(tireBrands: _brandController.text)}');
                             final updatedModel = WaitingCustomerModel(
                               branchId: branchId!,
                               customerName: _customerNameController.text,
@@ -330,9 +373,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                               notes: _notesController.text,
                               status: widget.customer?.status ?? 'pending',
                               createdAt:
-                                  widget.customer?.createdAt ??
+                              widget.customer?.createdAt ??
                                   DateTime.now().toString(),
-                              prices: priceControllers.map((controller) => controller.text).toList(),
+                              prices: priceControllers.map((
+                                  controller) => double.parse(controller.text)).toList(),
                             );
 
                             if (widget.customer == null) {
@@ -362,8 +406,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                           ),
                           child: widget.customer == null
                               ? state.addCustomerState == BlocStates.loading
-                                    ? CircularProgressIndicator()
-                                    : Text('Add To The Waiting List')
+                              ? CircularProgressIndicator()
+                              : Text('Add To The Waiting List')
                               : state.updateCustomerState == BlocStates.loading
                               ? CircularProgressIndicator()
                               : Text('Update User'),

@@ -6,7 +6,7 @@ void showErrorSnackBar(BuildContext context, String message) {
       content: Text(message),
       backgroundColor: Colors.red,
       behavior: SnackBarBehavior.floating,
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 4),
     ),
   );
 }

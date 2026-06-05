@@ -196,6 +196,27 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
     );
   }
 
+  Future<void> addPrice({required int id, required List<double> prices}) async{
+    emit(state.copyWith(addPriceState: BlocStates.loading));
+    final oldSet = state.waitingCustomers.firstWhere((element) => element.id == id).prices.toSet();
+    final newSet = prices.toSet();
+    final newPrices = newSet.difference(oldSet);
+    if(newPrices.isEmpty)
+      {
+        emit(state.copyWith(addPriceState: BlocStates.error, errorMessage: 'Trying to add same price again, No new prices to add'));
+        return;
+      }
+    final result = await repository.addPrices(id: id, prices: prices);
+    result.fold((failure)=> emit(state.copyWith(addPriceState: BlocStates.error, errorMessage: failure.message)), (prices){
+      List<WaitingCustomerModel> newList = List.from(state.waitingCustomers);
+      final index = newList.indexWhere((element) => element.id == id);
+      newList[index] = newList[index].copyWith(prices: prices);
+      emit(state.copyWith(
+        waitingCustomers: newList,
+        addPriceState: BlocStates.success,
+      ));
+    });
+  }
   void searchCustomers(String query) {
     emit(state.copyWith(searchQuery: query));
   }
