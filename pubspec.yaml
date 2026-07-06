@@ -25,6 +25,7 @@ dependencies:
   dio: ^5.9.2
   url_launcher: ^6.3.2
   whatsapp_unilink: ^2.1.0
+  timeago: ^3.7.1
 
 dev_dependencies:
   flutter_test:
