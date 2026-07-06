@@ -8,7 +8,12 @@ import 'package:supreme/presentation/waiting_customers/waiting_list_screen.dart'
 import '../../presentation/profile.dart';
 
 class AppCubit extends Cubit<AppStates>{
-  AppCubit() : super(AppInitialState());
+
+  final cacheHelper = CacheHelper.getInstance();
+  AppCubit() : super(AppInitialState()){
+    _isDark = cacheHelper.getBool('isDark');
+  }
+
 
   List<Widget> screens = [TiresStockScreen(), WaitingListScreen(), ProfileScreen()];
   List<String> appBarTitles = ['Tires Stock', 'Waiting List', 'Profile'];
@@ -21,7 +26,6 @@ class AppCubit extends Cubit<AppStates>{
 
   bool _isDark = false;
   bool get isDark => _isDark;
-  final cacheHelper = CacheHelper.getInstance();
   void toggleTheme(bool value)
   {
     _isDark = value;

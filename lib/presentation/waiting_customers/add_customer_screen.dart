@@ -24,12 +24,12 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   final List<String> tireBrands = const [
     'Michelin',
     'Bridgestone',
-    'Continental',
+    'GoodRide',
     'Goodyear',
     'Pirelli',
-    'Hankook',
+    'KinForest',
     'Yokohama',
-    'Toyo',
+    'Rapid',
     'Nexen',
   ];
 
@@ -166,10 +166,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 2.0),
                                           child: CustomTextField(
-                                            validator: (value) {
-                                              if (value!.isEmpty) return 'Price is required';
-                                              return null;
-                                            },
                                             keyboardType: TextInputType.number,
                                             controller: priceControllers[index],
                                             hintText: '0.00',
@@ -183,12 +179,19 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             ),
                           ),
                           BlocConsumer<WaitingListCubit, WaitingCustomerState>(
-                            listener: (context, state) {
-                              if(state.addPriceState == BlocStates.success)showSuccessSnackBar(context, 'Successful action');
-                              if(state.addPriceState == BlocStates.error) {
-                                showErrorSnackBar(context, 'Something went wrong: ${state.errorMessage!}');
-                              }
-                            },
+                              listener: (context, state) {
+                                if (state.addPriceState == BlocStates.success) {
+                                  showSuccessSnackBar(context, 'Successful action');
+
+                                  final navigator = Navigator.of(context);
+
+                                  Future.delayed(const Duration(milliseconds: 500), () {
+                                    if (navigator.canPop()) {
+                                      navigator.pop();
+                                    }
+                                  });
+                                }
+                              },
                               builder: (context, state) {
                                 return CustomButton(
                                   child: state.addPriceState ==
@@ -196,14 +199,11 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                       ? CircularProgressIndicator()
                                       : Text(widget.customer!.prices.isEmpty?'Add Price':'Update Price ... Sure?'),
                                   onPressed: () {
-                                    if (!_formKey.currentState!.validate()) return;
-                                    //TODO: Submit price to the server
                                     final List<String> prices = priceControllers
                                         .map((element) => element.text)
                                         .toList();
                                     cubit.addPrice(id: widget.customer!.id!,
-                                        prices: prices.map((element)=> double.parse(element)).toList());
-
+                                        prices: prices.map((element)=> double.tryParse(element)??0.0).toList());
                                   },
                                 );
                               }
@@ -361,7 +361,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                 .read<AuthBloc>()
                                 .userData
                                 .branchId;
-                            print('Brand: ${convertTiresBrandsIntoList(tireBrands: _brandController.text)}');
                             final updatedModel = WaitingCustomerModel(
                               branchId: branchId!,
                               customerName: _customerNameController.text,
@@ -376,7 +375,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                               widget.customer?.createdAt ??
                                   DateTime.now().toString(),
                               prices: priceControllers.map((
-                                  controller) => double.parse(controller.text)).toList(),
+                                  controller) => double.tryParse(controller.text)??0.0).toList(),
                             );
 
                             if (widget.customer == null) {
@@ -410,7 +409,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                               : Text('Add To The Waiting List')
                               : state.updateCustomerState == BlocStates.loading
                               ? CircularProgressIndicator()
-                              : Text('Update User'),
+                              : Text('Update User',),
                         );
                       },
                     ),
