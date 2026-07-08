@@ -5,6 +5,7 @@ import 'package:supreme/business_logic/auth_bloc/auth_events.dart';
 import 'package:supreme/business_logic/waiting_list_cubit/waiting_list_states.dart';
 import 'package:supreme/core/app_cubit/app_cubit.dart';
 import 'package:supreme/core/app_cubit/app_states.dart';
+import 'package:supreme/data/authentication/models/userdata_model.dart';
 import '../business_logic/waiting_list_cubit/waiting_list_cubit.dart';
 import 'auth/change_password.dart';
 
@@ -17,11 +18,16 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _notificationsEnabled = true; // Mock state
+  late final UserDataModel userData;
+  @override
+  void initState() {
+    userData = context.read<AuthBloc>().getUserData;
+    print('Id ${userData.branchId}');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final userData = context.read<AuthBloc>().userData;
-
 
     final String branchName = userData.branchName ?? 'Not Assigned';
     final String branchId = userData.branchId ?? 'N/A';

@@ -359,7 +359,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             if (!_formKey.currentState!.validate()) return;
                             final branchId = context
                                 .read<AuthBloc>()
-                                .userData
+                                .getUserData
                                 .branchId;
                             final updatedModel = WaitingCustomerModel(
                               branchId: branchId!,

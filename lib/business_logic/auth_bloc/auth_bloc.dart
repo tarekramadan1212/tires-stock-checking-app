@@ -75,6 +75,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
       password: event.password,
     );
     result.fold((failure) => emit(AuthErrorState(failure.message)), (_) {
+      add(GetCurrentUserDataEvent());
       // We emit NOTHING on success!
       // Why? Because the authStateStream will automatically
       // detect the login and emit the SignInState for us.
@@ -88,7 +89,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     emit(AuthLoadingState());
     final result = await authRepository.signOut();
     result.fold((failure) => emit(AuthErrorState(failure.message)), (_) {
-      if(userData.branchId != null) userData = UserDataModel();
+      if(_userData.branchId != null) _userData = UserDataModel();
       // will not emit logout state because the authStateStream will automatically
       // detect the logout and emit the UnAuthenticatedState for us.
     });
@@ -168,7 +169,8 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     emit(NavigateToChangePasswordScreenState());
   }
 
-  UserDataModel userData = UserDataModel();
+  UserDataModel _userData = UserDataModel();
+  UserDataModel get getUserData => _userData;
 
   Future<void> _onGetCurrentUserData(
     GetCurrentUserDataEvent event,
@@ -183,7 +185,8 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
         ),
       ),
       (data) {
-        userData = data;
+        _userData = data;
+        print('userData: ${_userData.branchId}');
         emit(GetCurrentUserDataState(dataStatus: GetUserDataStatus.success));
       }
     );
