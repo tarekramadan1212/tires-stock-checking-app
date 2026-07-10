@@ -35,8 +35,8 @@ class HomePage extends StatelessWidget {
                           )
                         : null,
                     actions: [
-                      ?state.selectedCustomers.isNotEmpty
-                          ? IconButton(
+                      if(state.selectedCustomers.isNotEmpty)
+                          IconButton(
                               onPressed: () {
                                 if (state.selectedCustomers.length == 1) {
                                   waitingListCubit.deleteSingleCustomer();
@@ -46,8 +46,7 @@ class HomePage extends StatelessWidget {
                                 waitingListCubit.toggleSelectionMode();
                               },
                               icon: Icon(Icons.delete),
-                            )
-                          : null,
+                            ),
                     ],
                   );
                 },
@@ -65,7 +64,7 @@ class HomePage extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 11),
               margin: const EdgeInsets.fromLTRB(8, 0, 8, 16),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
+                color: Colors.orange.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(

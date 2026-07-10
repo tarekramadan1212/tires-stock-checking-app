@@ -21,13 +21,27 @@ class TiresStockScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CustomTextField(
-                    onFieldSubmitted: (value) {
-                      secondContext.read<StockCubit>().searchSize(size: value);
-                    },
-                    keyboardType: TextInputType.datetime,
-                    hintText: 'Search Size, Brand',
-                    prefixIcon: Icon(Icons.search),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(13),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 20,
+                          offset: const Offset(0, -4),
+                        ),
+                      ]
+                    ),
+                    child: CustomTextField(
+                      fillColor: Colors.transparent,
+                      onFieldSubmitted: (value) {
+                        secondContext.read<StockCubit>().searchSize(size: value);
+                      },
+                      keyboardType: TextInputType.datetime,
+                      hintText: 'Search Size, Brand',
+                      prefixIcon: Icon(Icons.search),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Expanded(
