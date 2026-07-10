@@ -21,4 +21,7 @@ abstract class ICustomersDatasource {
 
   Future<List<double>> addPrices({required int id, required List<double> prices});
 
+  Future<void> addNewBrand({required String key,required List<String> brands});
+
+  Future<List<String>> getSavedBrands({required String key});
 }

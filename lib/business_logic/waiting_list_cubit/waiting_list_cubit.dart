@@ -21,18 +21,20 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
     emit(state.copyWith(getCustomersState: BlocStates.loading));
     final result = await repository.getAllWaitingCustomers();
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          getCustomersState: BlocStates.error,
-          errorMessage: failure.message,
-        ),
-      ),
-      (customers) => emit(
-        state.copyWith(
-          getCustomersState: BlocStates.success,
-          waitingCustomers: customers,
-        ),
-      ),
+          (failure) =>
+          emit(
+            state.copyWith(
+              getCustomersState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (customers) =>
+          emit(
+            state.copyWith(
+              getCustomersState: BlocStates.success,
+              waitingCustomers: customers,
+            ),
+          ),
     );
   }
 
@@ -40,13 +42,14 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
     emit(state.copyWith(addCustomerState: BlocStates.loading));
     final result = await repository.addNewWaitingCustomer(model: model);
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          addCustomerState: BlocStates.error,
-          errorMessage: failure.message,
-        ),
-      ),
-      (data) {
+          (failure) =>
+          emit(
+            state.copyWith(
+              addCustomerState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (data) {
         state.waitingCustomers.add(data);
         emit(
           state.copyWith(
@@ -68,15 +71,16 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
       updatedModel: updatedModel,
     );
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          updateCustomerState: BlocStates.error,
-          errorMessage: failure.message,
-        ),
-      ),
-      (data) {
+          (failure) =>
+          emit(
+            state.copyWith(
+              updateCustomerState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (data) {
         final index = state.waitingCustomers.indexWhere(
-          (row) => row.id == data.id,
+              (row) => row.id == data.id,
         );
         final List<WaitingCustomerModel> newList = List.from(
           state.waitingCustomers,
@@ -98,13 +102,14 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
       customerId: state.selectedCustomers[0],
     );
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          deleteCustomerState: BlocStates.error,
-          errorMessage: failure.message,
-        ),
-      ),
-      (data) {
+          (failure) =>
+          emit(
+            state.copyWith(
+              deleteCustomerState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (data) {
         emit(
           state.copyWith(
             waitingCustomers: state.waitingCustomers
@@ -124,13 +129,14 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
     );
 
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          deleteCustomerState: BlocStates.error,
-          errorMessage: failure.message,
-        ),
-      ),
-      (data) {
+          (failure) =>
+          emit(
+            state.copyWith(
+              deleteCustomerState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (data) {
         final deletedIds = data.map((customer) => customer.id).toSet();
         final newList = state.waitingCustomers
             .where((customer) => !deletedIds.contains(customer.id))
@@ -169,19 +175,32 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
     }
   }
 
-  Future<void> changeCustomerStatusData({required preStatus,required String status, required int id}) async {
+  Future<void> changeCustomerStatusData({
+    required preStatus,
+    required String status,
+    required int id,
+  }) async {
     String prevStatus = preStatus;
-    emit(state.copyWith(changeCustomerStatusState: BlocStates.loading, customerStatus: status));
-    final result = await repository.changeCustomerStatus(status: status, id: id);
-    result.fold(
-      (failure) => emit(
-        state.copyWith(
-          customerStatus: prevStatus,
-          changeCustomerStatusState: BlocStates.error,
-          errorMessage: failure.message,
-        ),
+    emit(
+      state.copyWith(
+        changeCustomerStatusState: BlocStates.loading,
+        customerStatus: status,
       ),
-      (newStatus) {
+    );
+    final result = await repository.changeCustomerStatus(
+      status: status,
+      id: id,
+    );
+    result.fold(
+          (failure) =>
+          emit(
+            state.copyWith(
+              customerStatus: prevStatus,
+              changeCustomerStatusState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (newStatus) {
         List<WaitingCustomerModel> newList = List.from(state.waitingCustomers);
         final index = newList.indexWhere((element) => element.id == id);
         newList[index] = newList[index].copyWith(status: newStatus);
@@ -196,28 +215,78 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
     );
   }
 
-  Future<void> addPrice({required int id, required List<double> prices}) async{
+  Future<void> addPrice({required int id, required List<double> prices}) async {
     emit(state.copyWith(addPriceState: BlocStates.loading));
-    final oldSet = state.waitingCustomers.firstWhere((element) => element.id == id).prices.toSet();
+    final oldSet = state.waitingCustomers
+        .firstWhere((element) => element.id == id)
+        .prices
+        .toSet();
     final newSet = prices.toSet();
     final newPrices = newSet.difference(oldSet);
-    if(newPrices.isEmpty)
-      {
-        emit(state.copyWith(addPriceState: BlocStates.error, errorMessage: 'Trying to add same price again, No new prices to add'));
-        return;
-      }
+    if (newPrices.isEmpty) {
+      emit(
+        state.copyWith(
+          addPriceState: BlocStates.error,
+          errorMessage: 'Trying to add same price again, No new prices to add',
+        ),
+      );
+      return;
+    }
     final result = await repository.addPrices(id: id, prices: prices);
-    result.fold((failure)=> emit(state.copyWith(addPriceState: BlocStates.error, errorMessage: failure.message)), (prices){
-      List<WaitingCustomerModel> newList = List.from(state.waitingCustomers);
-      final index = newList.indexWhere((element) => element.id == id);
-      newList[index] = newList[index].copyWith(prices: prices);
-      emit(state.copyWith(
-        waitingCustomers: newList,
-        addPriceState: BlocStates.success,
-      ));
-    });
+    result.fold(
+          (failure) =>
+          emit(
+            state.copyWith(
+              addPriceState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (prices) {
+        List<WaitingCustomerModel> newList = List.from(state.waitingCustomers);
+        final index = newList.indexWhere((element) => element.id == id);
+        newList[index] = newList[index].copyWith(prices: prices);
+        emit(
+          state.copyWith(
+            waitingCustomers: newList,
+            addPriceState: BlocStates.success,
+          ),
+        );
+      },
+    );
   }
+
   void searchCustomers(String query) {
     emit(state.copyWith(searchQuery: query));
+  }
+
+  void addNewBrand({required List<String> brands, required String key}) async {
+    emit(state.copyWith(addNewBrandState: BlocStates.loading));
+    final result = await repository.addNewBrand(key: key, brands: brands);
+    result.fold(
+          (failure) =>
+          emit(
+            state.copyWith(
+              addNewBrandState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (unit) async {
+        emit(state.copyWith(addNewBrandState: BlocStates.success));
+        getSavedBrands(key: key);
+      },
+    );
+  }
+
+  void getSavedBrands({required String key}) async {
+    emit(state);
+    emit(state.copyWith(getSavedBrandsState: BlocStates.loading));
+    final savedBrands = await repository.getSavedBrands(key: key);
+    savedBrands.fold((failure) =>
+        emit(state.copyWith(getSavedBrandsState: BlocStates.error,
+            errorMessage: failure.message)),
+            (brands){
+          emit(state.copyWith(getSavedBrandsState: BlocStates.success,
+              savedSelectableBrands: brands));
+        });
   }
 }

@@ -15,6 +15,9 @@ class WaitingCustomerState {
   final List<int> selectedCustomers;
   final String? customerStatus;
   final String searchQuery;
+  final BlocStates addNewBrandState;
+  final BlocStates getSavedBrandsState;
+  final List<String> savedSelectableBrands;
 
 
   WaitingCustomerState({
@@ -30,6 +33,9 @@ class WaitingCustomerState {
     this.selectedCustomers = const [],
     this.customerStatus,
     this.searchQuery = '',
+    this.addNewBrandState = BlocStates.initial,
+    this.getSavedBrandsState = BlocStates.initial,
+    this.savedSelectableBrands = const[],
   });
 
   List<WaitingCustomerModel> get filteredCustomers
@@ -56,6 +62,9 @@ class WaitingCustomerState {
     BlocStates? changeCustomerStatusState,
     String? customerStatus,
     String? searchQuery,
+    BlocStates? addNewBrandState,
+    BlocStates? getSavedBrandsState,
+    List<String>? savedSelectableBrands,
   }) {
     return WaitingCustomerState(
       waitingCustomers: waitingCustomers??this.waitingCustomers,
@@ -70,6 +79,9 @@ class WaitingCustomerState {
       changeCustomerStatusState: changeCustomerStatusState??this.changeCustomerStatusState,
       customerStatus: customerStatus??this.customerStatus,
       searchQuery: searchQuery??this.searchQuery,
+      addNewBrandState: addNewBrandState??this.addNewBrandState,
+      getSavedBrandsState: getSavedBrandsState?? this.getSavedBrandsState,
+        savedSelectableBrands: savedSelectableBrands?? this.savedSelectableBrands,
     );
   }
 }

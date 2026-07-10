@@ -22,6 +22,13 @@ class CacheHelper{
     return  _prefs.getBool(key)??false;
   }
 
+  Future<void> putList(String key, List<String> value)async
+  {
+    await _prefs.setStringList(key, value);
+  }
 
-
+  Future<List<String>> getList(String key)async
+  {
+    return _prefs.getStringList(key)??[];
+  }
 }

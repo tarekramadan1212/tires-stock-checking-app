@@ -2,10 +2,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supreme/data/customers/customers_datasource/I_customers_datasource.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
 
+import '../../../core/utilities/helpers/cache_helper.dart';
+
 class CustomersDatasourceImpl implements ICustomersDatasource {
   final SupabaseClient client;
+  final CacheHelper cacheHelper;
 
-  CustomersDatasourceImpl({required this.client});
+  CustomersDatasourceImpl({required this.client, required this.cacheHelper});
 
   @override
   Future<WaitingCustomerModel> addNewWaitingCustomer({
@@ -85,5 +88,15 @@ class CustomersDatasourceImpl implements ICustomersDatasource {
     final List<dynamic> rawPrices = data['prices'] ?? [];
     // 2. Safely parse and map elements to double
     return rawPrices.map((e) => double.parse(e.toString())).toList();
+  }
+
+  @override
+  Future<void> addNewBrand({required String key, required List<String> brands}) async{
+    await cacheHelper.putList(key, brands);
+  }
+
+  @override
+  Future<List<String>> getSavedBrands({required String key}) async{
+    return await cacheHelper.getList(key);
   }
 }

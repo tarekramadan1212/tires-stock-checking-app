@@ -26,4 +26,8 @@ abstract class ICustomersRepo {
 
   Future<Either<CustomFailure, List<double>>> addPrices({required int id, required List<double> prices});
 
+  Future<Either<CustomFailure, Unit>> addNewBrand({required String key,required List<String> brands});
+
+  Future<Either<CustomFailure, List<String>>> getSavedBrands({required String key});
+
 }

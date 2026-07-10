@@ -16,6 +16,7 @@ import '../../business_logic/auth_bloc/auth_bloc.dart';
 import '../../data/authentication/auth_data_source/auth_data_source_impl.dart';
 import '../../data/customers/customers_datasource/I_customers_datasource.dart';
 import '../../data/customers/customers_repository/customers_repository_impl.dart';
+import '../utilities/helpers/cache_helper.dart';
 
 final sl = GetIt.instance;
 
@@ -32,7 +33,7 @@ Future<void> setUpServiceLocator()async
   sl.registerLazySingleton<AuthBloc>(() => AuthBloc(authRepository: sl<BaseAuthRepository>()));
 
   ///Waiting List Services
-  sl.registerLazySingleton<ICustomersDatasource>(() => CustomersDatasourceImpl(client: sl()));
+  sl.registerLazySingleton<ICustomersDatasource>(() => CustomersDatasourceImpl(client: sl(), cacheHelper: CacheHelper.getInstance()));
 
   sl.registerLazySingleton<ICustomersRepo>(() => CustomersRepositoryImpl(datasource: sl()));
 

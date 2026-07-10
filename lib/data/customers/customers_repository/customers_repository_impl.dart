@@ -93,4 +93,26 @@ class CustomersRepositoryImpl implements ICustomersRepo {
       return await datasource.addPrices(id: id, prices: prices);
     });
   }
+
+  @override
+  Future<Either<CustomFailure, Unit>> addNewBrand({required String key, required List<String> brands}) async{
+    try{
+      await datasource.addNewBrand(key: key, brands: brands);
+      return Right(unit);
+    } catch (e)
+    {
+      return Left(CacheFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<CustomFailure, List<String>>> getSavedBrands({required String key})async {
+    try{
+      final result = await datasource.getSavedBrands(key: key);
+      return Right(result);
+    } catch (e)
+    {
+      return Left(CacheFailure(e.toString()));
+    }
+  }
 }

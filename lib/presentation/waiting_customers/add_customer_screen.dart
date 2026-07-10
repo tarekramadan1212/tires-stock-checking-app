@@ -21,19 +21,11 @@ class AddCustomerScreen extends StatefulWidget {
 }
 
 class _AddCustomerScreenState extends State<AddCustomerScreen> {
-  final List<String> tireBrands = const [
-    'Michelin',
-    'Bridgestone',
-    'GoodRide',
-    'Goodyear',
-    'Pirelli',
-    'KinForest',
-    'Yokohama',
-    'Rapid',
-    'Nexen',
-  ];
+  List<String> tireBrands = [];
 
   List<String> _selectedBrands = [];
+
+  final TextEditingController creatingNewBrandController = TextEditingController();
 
   final TextEditingController _customerNameController = TextEditingController();
 
@@ -45,15 +37,15 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
   final TextEditingController _notesController = TextEditingController();
 
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _dialogFormKey = GlobalKey<FormState>();
 
   final cubit = sl<WaitingListCubit>();
 
   List<TextEditingController> priceControllers = [];
 
   void updateControllers() {
-    if(widget.customer == null) return;
+    if (widget.customer == null) return;
     while (widget.customer!.tireBrand.length > priceControllers.length) {
       priceControllers.add(TextEditingController());
     }
@@ -61,17 +53,17 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       priceControllers.last.dispose();
       priceControllers.removeLast();
     }
-    if(widget.customer!.prices.isNotEmpty)
-      {
-        for (int i = 0; i < widget.customer!.prices.length; i++) {
-          priceControllers[i].text = widget.customer!.prices[i].toString();
-        }
+    if (widget.customer!.prices.isNotEmpty) {
+      for (int i = 0; i < widget.customer!.prices.length; i++) {
+        priceControllers[i].text = widget.customer!.prices[i].toString();
       }
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    cubit.getSavedBrands(key: 'tireBrands');
     _customerNameController.text = widget.customer?.customerName ?? '';
     _phoneController.text = widget.customer?.phoneNumber ?? '';
     _sizeController.text = widget.customer?.tireSize ?? '';
@@ -99,7 +91,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     return BlocProvider.value(
       value: cubit,
       child: Scaffold(
-        appBar: AppBar(title: Text('Add New Customer')),
+        appBar: AppBar(title: Text('Add New Customer')
+        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 5.5, horizontal: 5),
@@ -141,15 +134,15 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: _selectedBrands
-                                  .asMap()
-                                  .entries
-                                  .map((brand) {
+                              children: _selectedBrands.asMap().entries.map((
+                                brand,
+                              ) {
                                 final index = brand.key;
                                 final value = brand.value;
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 5.0),
+                                    vertical: 5.0,
+                                  ),
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: Colors.green.shade400,
@@ -157,14 +150,15 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                     ),
                                     child: ListTile(
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              13)),
+                                        borderRadius: BorderRadius.circular(13),
+                                      ),
                                       title: Text('Price for $value'),
                                       trailing: SizedBox(
                                         width: 100,
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
-                                              vertical: 2.0),
+                                            vertical: 2.0,
+                                          ),
                                           child: CustomTextField(
                                             keyboardType: TextInputType.number,
                                             controller: priceControllers[index],
@@ -179,34 +173,50 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             ),
                           ),
                           BlocConsumer<WaitingListCubit, WaitingCustomerState>(
-                              listener: (context, state) {
-                                if (state.addPriceState == BlocStates.success) {
-                                  showSuccessSnackBar(context, 'Successful action');
+                            listener: (context, state) {
+                              if (state.addPriceState == BlocStates.success) {
+                                showSuccessSnackBar(
+                                  context,
+                                  'Successful action',
+                                );
 
-                                  final navigator = Navigator.of(context);
+                                final navigator = Navigator.of(context);
 
-                                  Future.delayed(const Duration(milliseconds: 500), () {
+                                Future.delayed(
+                                  const Duration(milliseconds: 500),
+                                  () {
                                     if (navigator.canPop()) {
                                       navigator.pop();
                                     }
-                                  });
-                                }
-                              },
-                              builder: (context, state) {
-                                return CustomButton(
-                                  child: state.addPriceState ==
-                                      BlocStates.loading
-                                      ? CircularProgressIndicator()
-                                      : Text(widget.customer!.prices.isEmpty?'Add Price':'Update Price ... Sure?'),
-                                  onPressed: () {
-                                    final List<String> prices = priceControllers
-                                        .map((element) => element.text)
-                                        .toList();
-                                    cubit.addPrice(id: widget.customer!.id!,
-                                        prices: prices.map((element)=> double.tryParse(element)??0.0).toList());
                                   },
                                 );
                               }
+                            },
+                            builder: (context, state) {
+                              return CustomButton(
+                                child: state.addPriceState == BlocStates.loading
+                                    ? CircularProgressIndicator()
+                                    : Text(
+                                        widget.customer!.prices.isEmpty
+                                            ? 'Add Price'
+                                            : 'Update Price ... Sure?',
+                                      ),
+                                onPressed: () {
+                                  final List<String> prices = priceControllers
+                                      .map((element) => element.text)
+                                      .toList();
+                                  cubit.addPrice(
+                                    id: widget.customer!.id!,
+                                    prices: prices
+                                        .map(
+                                          (element) =>
+                                              double.tryParse(element) ?? 0.0,
+                                        )
+                                        .toList(),
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -282,34 +292,107 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     hintText: 'Michelin',
                     controller: _brandController,
                   ),
-                  StatefulBuilder(
-                    builder: (context, setLocalState) {
-                      return Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: tireBrands.map((brand) {
-                          return FilterChip(
-                            label: Text(brand),
-                            selected: _selectedBrands.contains(brand),
-                            onSelected: (bool selected) {
-                              setLocalState(() {
-                                if (selected) {
-                                  _selectedBrands.add(brand);
-                                } else {
-                                  _selectedBrands.remove(brand);
-                                }
-                                _brandController.text =
-                                _selectedBrands.isNotEmpty
-                                    ? '${_selectedBrands.join(', ')},'
-                                    : '';
-                              });
-                            },
-                            selectedColor: AppColors.primarySeed.withValues(
-                              alpha: 0.3,
-                            ),
-                            checkmarkColor: AppColors.primarySeed,
+
+                  BlocBuilder<WaitingListCubit, WaitingCustomerState>(
+                    buildWhen: (prev, current)=>
+                      prev.addNewBrandState != current.addNewBrandState || prev.getSavedBrandsState != current.getSavedBrandsState,
+                    builder: (context, state) {
+                      return StatefulBuilder(
+                        builder: (context, setLocalState) {
+                          if (state.getSavedBrandsState == BlocStates.success) {
+                            tireBrands = state.savedSelectableBrands;
+                          }
+                          return Wrap(
+                            spacing: 8.0,
+                            runSpacing: 4.0,
+                            children: tireBrands.map((brand) {
+                              return FilterChip(
+                                label: Text(brand),
+                                selected: _selectedBrands.contains(brand),
+                                onSelected: (bool selected) {
+                                  setLocalState(() {
+                                    if (selected) {
+                                      _selectedBrands.add(brand);
+                                    } else {
+                                      _selectedBrands.remove(brand);
+                                    }
+                                    _brandController.text =
+                                        _selectedBrands.isNotEmpty
+                                        ? '${_selectedBrands.join(', ')},'
+                                        : '';
+                                  });
+                                },
+                                selectedColor: AppColors.primarySeed.withValues(
+                                  alpha: 0.3,
+                                ),
+                                checkmarkColor: AppColors.primarySeed,
+                              );
+                            }).toList(),
                           );
-                        }).toList(),
+                        },
+                        //TODO: add a new brand chip button to add a new brand to the list of brands
+                      );
+                    }
+                  ),
+                  InkWell(
+                    splashColor: Colors.grey.withValues(alpha: 0.6),
+                    highlightColor: Colors.deepOrangeAccent.withValues(alpha: 0.6),
+                    child: FractionallySizedBox(
+                      widthFactor: 0.46,
+                      child: Ink(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.deepOrangeAccent.withValues(alpha: 0.7),
+                          borderRadius: BorderRadius.circular(13),
+                        ),
+                        height: 42,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Add New Brand',
+                              style: Theme.of(context).textTheme.bodyMedium!
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Icon(Icons.add),
+                          ],
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: Text('Create a New Brand'),
+                          content: Form(
+                            key: _dialogFormKey,
+                            child: CustomTextField(
+                              controller: creatingNewBrandController,
+                              hintText: 'Enter a New Brand',
+                              validator: (value)
+                              {
+                                if(value!.isEmpty) return 'Enter a new Brand to create';
+                                return null;
+                              },
+                            ),
+                          ),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+                            TextButton(
+                              onPressed: ()
+                              {
+                                if(!_dialogFormKey.currentState!.validate()) return;
+
+                                tireBrands.add(creatingNewBrandController.text);
+                                cubit.addNewBrand(brands: tireBrands, key: 'tireBrands');
+                                creatingNewBrandController.clear();
+                                Navigator.pop(context);
+                              },
+                              child: Text('Add'),
+                            ),
+
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -350,7 +433,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             state.updateCustomerState == BlocStates.error) {
                           showErrorSnackBar(context, state.errorMessage!);
                         } else if (state.addCustomerState ==
-                            BlocStates.loading ||
+                                BlocStates.loading ||
                             state.updateCustomerState == BlocStates.loading) {}
                       },
                       builder: (context, state) {
@@ -372,10 +455,14 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                               notes: _notesController.text,
                               status: widget.customer?.status ?? 'pending',
                               createdAt:
-                              widget.customer?.createdAt ??
+                                  widget.customer?.createdAt ??
                                   DateTime.now().toString(),
-                              prices: priceControllers.map((
-                                  controller) => double.tryParse(controller.text)??0.0).toList(),
+                              prices: priceControllers
+                                  .map(
+                                    (controller) =>
+                                        double.tryParse(controller.text) ?? 0.0,
+                                  )
+                                  .toList(),
                             );
 
                             if (widget.customer == null) {
@@ -405,11 +492,11 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                           ),
                           child: widget.customer == null
                               ? state.addCustomerState == BlocStates.loading
-                              ? CircularProgressIndicator()
-                              : Text('Add To The Waiting List')
+                                    ? CircularProgressIndicator()
+                                    : Text('Add To The Waiting List')
                               : state.updateCustomerState == BlocStates.loading
                               ? CircularProgressIndicator()
-                              : Text('Update User',),
+                              : Text('Update User'),
                         );
                       },
                     ),

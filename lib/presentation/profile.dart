@@ -17,12 +17,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _notificationsEnabled = true; // Mock state
   late final UserDataModel userData;
   @override
   void initState() {
     userData = context.read<AuthBloc>().getUserData;
-    print('Id ${userData.branchId}');
     super.initState();
   }
 
@@ -117,18 +115,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
 
           // Notification Settings (Mock)
-          ListTile(
-            leading: const Icon(Icons.notifications_outlined),
-            title: const Text("Notification Settings"),
-            trailing: Switch(
-              value: _notificationsEnabled,
-              onChanged: (val) {
-                setState(() {
-                  _notificationsEnabled = val;
-                });
-              },
-            ),
-          ),
 
           const SizedBox(height: 32),
 
