@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
 import '../../data/tires/stock_models/tires_model.dart';
+import '../../presentation/search_stock/transaction_history_screen.dart';
 
 class TiresItemWidget extends StatelessWidget {
   const TiresItemWidget({required this.model, super.key});
@@ -67,39 +68,15 @@ class TiresItemWidget extends StatelessWidget {
                 ),
               ),
 
-              IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios_rounded))
+              IconButton(
+                padding: EdgeInsets.zero,
+                  constraints: BoxConstraints(minWidth: 75, minHeight: 62),
+                  onPressed: ()
+                  {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> TransactionHistoryScreen(tire: model,)));
+                  },
+                  icon: Icon(Icons.arrow_forward_ios_rounded))
 
-              ///The Price section
-              // Expanded(
-              //   flex: 1,
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //     children: [
-              //       Expanded(
-              //         flex: 2,
-              //         child: Container(
-              //           padding: const EdgeInsets.all(1.2),
-              //           decoration: BoxDecoration(
-              //             color: Colors.grey.shade200,
-              //             borderRadius: BorderRadius.circular(5),
-              //           ),
-              //           child: Column(
-              //             crossAxisAlignment: CrossAxisAlignment.start,
-              //             children: [
-              //               Text('Cost', style: theme.titleMedium),
-              //               Text(
-              //                 model.quantity.toString(),
-              //                 style: theme.titleMedium,
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       ),
-              //       //SizedBox(width: 2.0),
-              //       IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios_rounded))
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ),

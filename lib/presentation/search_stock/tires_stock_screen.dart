@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supreme/business_logic/stock_cubit/stock_cubit.dart';
 import 'package:supreme/core/widgets/custom_text_field.dart';
 import 'package:supreme/core/widgets/tires_item_widget.dart';
-import '../business_logic/stock_cubit/stock_states.dart';
-import '../core/services/service_locator.dart';
+import '../../business_logic/stock_cubit/stock_states.dart';
+import '../../core/services/service_locator.dart';
 
 class TiresStockScreen extends StatelessWidget {
   const TiresStockScreen({super.key});
