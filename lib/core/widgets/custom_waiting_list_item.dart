@@ -121,7 +121,7 @@ class CustomWaitingListItem extends StatelessWidget {
                                 ],
                               ),
                               Text(
-                                'Ph: ${customerModel.phoneNumber}',
+                                'Phone: ${customerModel.phoneNumber}',
                                 style: theme.titleMedium!.copyWith(
                                   fontSize: 14,
                                   color: Colors.grey.shade600,

@@ -18,6 +18,8 @@ class CustomTextField extends StatelessWidget {
     this.onFieldSubmitted,
     this.textInputAction,
     this.fillColor,
+    this.enabled,
+    this.readOnly,
     super.key,
   });
 
@@ -27,6 +29,8 @@ class CustomTextField extends StatelessWidget {
   final int? maxLines;
   final int? maxLength;
   final bool? obscureText;
+  final bool? enabled;
+  final bool? readOnly;
   final String? Function(String?)? validator;
   final TextEditingController? controller;
   final InputBorder? border;
@@ -47,6 +51,8 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       maxLines: maxLines??1,
       maxLength: maxLength,
+      enabled: enabled??true,
+      readOnly: readOnly??false,
       obscureText: obscureText??false,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,

@@ -160,6 +160,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                             vertical: 2.0,
                                           ),
                                           child: CustomTextField(
+                                            prefixIcon: const Icon(Icons.attach_money),
                                             keyboardType: TextInputType.number,
                                             controller: priceControllers[index],
                                             hintText: '0.00',
@@ -231,6 +232,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
+                    prefixIcon: const Icon(Icons.person),
                     validator: (value) {
                       if (value!.isEmpty) return 'Customer name is required';
                       return null;
@@ -248,6 +250,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
+                    prefixIcon: const Icon(Icons.phone),
                     validator: (value) {
                       if (value!.isEmpty) return 'Phone number is required';
                       return null;
@@ -266,6 +269,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
+                    prefixIcon: const Icon(Icons.straighten),
                     validator: (value) {
                       if (value!.isEmpty) return 'Tire size is required';
                       return null;
@@ -276,7 +280,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     controller: _sizeController,
                   ),
                   Text(
-                    'Tire Brand (if you did not select from the suggested items and entered more than one brand manually enter comma between them)',
+                    'Tire Brand',
                     style: TextStyle(
                       color: Colors.grey.shade600,
                       fontSize: 16,
@@ -284,6 +288,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
+                    prefixIcon: const Icon(Icons.branding_watermark),
+                    readOnly: true,
                     validator: (value) {
                       if (value!.isEmpty) return 'Tire brand is required';
                       return null;
@@ -367,6 +373,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                           content: Form(
                             key: _dialogFormKey,
                             child: CustomTextField(
+                              prefixIcon: const Icon(Icons.add_business),
                               controller: creatingNewBrandController,
                               hintText: 'Enter a New Brand',
                               validator: (value)
@@ -405,6 +412,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   CustomTextField(
+                    prefixIcon: const Icon(Icons.notes),
                     textInputAction: TextInputAction.done,
                     hintText: 'Additional Details ....',
                     maxLines: 4,
