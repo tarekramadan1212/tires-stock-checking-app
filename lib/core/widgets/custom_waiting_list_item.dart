@@ -71,23 +71,20 @@ class CustomWaitingListItem extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // ROW 1: The Main Heroes (Name)
+                              // ROW 1: The Main Heroes (Name - Time ago)
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  // Boldest element
-                                  Expanded(
-                                    child: Text(
-                                      customerModel.customerName,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: theme.titleMedium!.copyWith(
-                                        color: Colors.grey.shade900,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 19,
-                                      ),
+                                  Text(
+                                    customerModel.customerName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.titleMedium!.copyWith(
+                                      color: Colors.grey.shade900,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 19,
                                     ),
                                   ),
+                                  const SizedBox(width: 13,),
                                 ],
                               ),
                               const SizedBox(height: 6), // Clean breathing room
@@ -103,21 +100,6 @@ class CustomWaitingListItem extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.access_time_filled_rounded, size: 13, color: Colors.grey.shade400),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        timeago.format(DateTime.parse(customerModel.createdAt)),
-                                        style: theme.bodySmall!.copyWith(
-                                          color: Colors.grey.shade600,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
                                 ],
                               ),
                               Text(
@@ -131,66 +113,86 @@ class CustomWaitingListItem extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 2.0),
-                        BlocBuilder<WaitingListCubit, WaitingCustomerState>(
-                          builder: (context, state) {
-                            final currentItem = state.waitingCustomers.firstWhere(
-                                  (element) => element.id == customerModel.id,
-                              orElse: () => customerModel,
-                            );
-
-                            final currentStatus = WaitingCustomerStatus.values.byName(currentItem.status!);
-
-                            return PopupMenuButton<WaitingCustomerStatus>(
-                              initialValue: currentStatus,
-                              tooltip: 'Change Status',
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 12.5, horizontal: 18),
-                                decoration: BoxDecoration(
-                                  color: currentStatus.color.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(20), // Makes it look like a pill chip
-                                  border: Border.all(color: currentStatus.color.withValues(alpha: 0.5)),
-                                ),
-                                child: Text(
-                                  currentStatus.label.toUpperCase(),
-                                  style: theme.displayMedium!.copyWith(
-                                    color: currentStatus.color,
-                                    fontWeight: FontWeight.bold,
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.access_time_filled_rounded, size: 12, color: Colors.grey.shade400),
+                                const SizedBox(width: 4),
+                                Text(
+                                  timeago.format(DateTime.parse(customerModel.createdAt)),
+                                  style: theme.bodySmall!.copyWith(
+                                    color: Colors.grey.shade600,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                              ),
-                              // This builds the menu options when the chip is clicked
-                              itemBuilder: (BuildContext context) {
-                                return WaitingCustomerStatus.values.map((WaitingCustomerStatus status) {
-                                  return PopupMenuItem<WaitingCustomerStatus>(
-                                    value: status,
-                                    child: Row(
-                                      children: [
-                                        CircleAvatar(radius: 6, backgroundColor: status.color),
-                                        const SizedBox(width: 10),
-                                        Text(
-                                          status.label,
-                                          style: theme.bodyMedium?.copyWith(
-                                            fontWeight: status == currentStatus ? FontWeight.bold : FontWeight.normal,
-                                          ),
-                                        ),
-                                      ],
+                              ],
+                            ),
+                            const SizedBox(height: 10.0),
+                            BlocBuilder<WaitingListCubit, WaitingCustomerState>(
+                              builder: (context, state) {
+                                final currentItem = state.waitingCustomers.firstWhere(
+                                      (element) => element.id == customerModel.id,
+                                  orElse: () => customerModel,
+                                );
+
+                                final currentStatus = WaitingCustomerStatus.values.byName(currentItem.status!);
+
+                                return PopupMenuButton<WaitingCustomerStatus>(
+                                  initialValue: currentStatus,
+                                  tooltip: 'Change Status',
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 12.5, horizontal: 18),
+                                    decoration: BoxDecoration(
+                                      color: currentStatus.color.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(20), // Makes it look like a pill chip
+                                      border: Border.all(color: currentStatus.color.withValues(alpha: 0.5)),
                                     ),
-                                  );
-                                }).toList();
+                                    child: Text(
+                                      currentStatus.label.toUpperCase(),
+                                      style: theme.displayMedium!.copyWith(
+                                        color: currentStatus.color,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  // This builds the menu options when the chip is clicked
+                                  itemBuilder: (BuildContext context) {
+                                    return WaitingCustomerStatus.values.map((WaitingCustomerStatus status) {
+                                      return PopupMenuItem<WaitingCustomerStatus>(
+                                        value: status,
+                                        child: Row(
+                                          children: [
+                                            CircleAvatar(radius: 6, backgroundColor: status.color),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              status.label,
+                                              style: theme.bodyMedium?.copyWith(
+                                                fontWeight: status == currentStatus ? FontWeight.bold : FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList();
+                                  },
+                                  onSelected: (WaitingCustomerStatus newValue) {
+                                    if (newValue.label != currentItem.status) {
+                                      cubit.changeCustomerStatusData(
+                                        preStatus: currentItem.status!,
+                                        status: newValue.name,
+                                        id: currentItem.id!,
+                                      );
+                                    }
+                                  },
+                                );
                               },
-                              onSelected: (WaitingCustomerStatus newValue) {
-                                if (newValue.label != currentItem.status) {
-                                  cubit.changeCustomerStatusData(
-                                    preStatus: currentItem.status!,
-                                    status: newValue.name,
-                                    id: currentItem.id!,
-                                  );
-                                }
-                              },
-                            );
-                          },
+                            ),
+                          ],
                         ),
+
                       ],
                     );
                   },

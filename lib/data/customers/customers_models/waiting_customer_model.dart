@@ -9,6 +9,8 @@ class WaitingCustomerModel {
   final String? status;
   final String branchId;
   final List<double> prices;
+  final String countryCode;
+  final String countryFlag;
 
   const WaitingCustomerModel({
     this.id,
@@ -21,6 +23,8 @@ class WaitingCustomerModel {
     required this.createdAt,
     required this.branchId,
     required this.prices,
+    required this.countryCode,
+    required this.countryFlag,
   });
 
   factory WaitingCustomerModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +41,8 @@ class WaitingCustomerModel {
       prices: (json['prices'] as List? ?? [])
           .map((e) => (e as num).toDouble())
           .toList(),
+      countryCode: json['country_code']??'+973',
+      countryFlag: json['country_flag']??'BH',
     );
   }
 
@@ -51,6 +57,8 @@ class WaitingCustomerModel {
       'status': status ?? 'pending',
       'created_at': createdAt,
       'prices': prices,
+      'country_code': countryCode,
+      'country_flag': countryFlag
     };
   }
 
@@ -65,6 +73,8 @@ class WaitingCustomerModel {
     List<String>? tireBrand,
     String? notes,
     List<double>? prices,
+    String? countryCode,
+    String? countryFlag,
   }) {
     return WaitingCustomerModel(
       id: id??this.id,
@@ -77,6 +87,8 @@ class WaitingCustomerModel {
       tireBrand: tireBrand??this.tireBrand,
       notes: notes??this.notes,
       prices: prices??this.prices,
+      countryCode: countryCode??this.countryCode,
+      countryFlag: countryFlag??this.countryFlag,
     );
   }
 

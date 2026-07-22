@@ -18,6 +18,7 @@ class WaitingCustomerState {
   final BlocStates addNewBrandState;
   final BlocStates getSavedBrandsState;
   final List<String> savedSelectableBrands;
+  final BlocStates sendWhatsAppMessageState;
 
 
   WaitingCustomerState({
@@ -36,6 +37,7 @@ class WaitingCustomerState {
     this.addNewBrandState = BlocStates.initial,
     this.getSavedBrandsState = BlocStates.initial,
     this.savedSelectableBrands = const[],
+    this.sendWhatsAppMessageState = BlocStates.initial,
   });
 
   List<WaitingCustomerModel> get filteredCustomers
@@ -65,6 +67,7 @@ class WaitingCustomerState {
     BlocStates? addNewBrandState,
     BlocStates? getSavedBrandsState,
     List<String>? savedSelectableBrands,
+    BlocStates? sendWhatsAppMessageState,
   }) {
     return WaitingCustomerState(
       waitingCustomers: waitingCustomers??this.waitingCustomers,
@@ -82,6 +85,7 @@ class WaitingCustomerState {
       addNewBrandState: addNewBrandState??this.addNewBrandState,
       getSavedBrandsState: getSavedBrandsState?? this.getSavedBrandsState,
         savedSelectableBrands: savedSelectableBrands?? this.savedSelectableBrands,
+      sendWhatsAppMessageState: sendWhatsAppMessageState??this.sendWhatsAppMessageState,
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:supreme/data/authentication/auth_repo/auth_repo_impl.dart';
 import 'package:supreme/data/authentication/auth_repo/base_auth_repo.dart';
 import 'package:supreme/data/customers/customers_datasource/customers_datasource_impl.dart';
 import 'package:supreme/data/customers/customers_repository/i_customers_repository.dart';
+import 'package:supreme/data/customers/customers_services/message_service/base_message_service.dart';
 import 'package:supreme/data/tires/stock_datasource/i_stock_datasource.dart';
 import 'package:supreme/data/tires/stock_datasource/stock_datasource_impl.dart';
 import 'package:supreme/data/tires/stock_repository/i_stock_repository.dart';
@@ -16,6 +17,7 @@ import '../../business_logic/auth_bloc/auth_bloc.dart';
 import '../../data/authentication/auth_data_source/auth_data_source_impl.dart';
 import '../../data/customers/customers_datasource/I_customers_datasource.dart';
 import '../../data/customers/customers_repository/customers_repository_impl.dart';
+import '../../data/customers/customers_services/message_service/whatsapp_message_service_impl.dart';
 import '../utilities/helpers/cache_helper.dart';
 
 final sl = GetIt.instance;
@@ -34,10 +36,15 @@ Future<void> setUpServiceLocator()async
 
   ///Waiting List Services
   sl.registerLazySingleton<ICustomersDatasource>(() => CustomersDatasourceImpl(client: sl(), cacheHelper: CacheHelper.getInstance()));
+  sl.registerLazySingleton<BaseMessageServices>(()=>WhatsAppMessageServiceImpl());
+  sl.registerLazySingleton<ICustomersRepo>(() => CustomersRepositoryImpl(datasource: sl(), messageServices: sl()));
 
-  sl.registerLazySingleton<ICustomersRepo>(() => CustomersRepositoryImpl(datasource: sl()));
-
-  sl.registerLazySingleton<WaitingListCubit>(() => WaitingListCubit(repository: sl()));
+  ///waiting list cubit -- getting the data once here at the beginning of the app
+  sl.registerLazySingleton<WaitingListCubit>(() {
+    final cubit = WaitingListCubit(repository: sl());
+    cubit.getWaitingCustomers();
+    return cubit;
+  });
 
   ///Stock Services
   sl.registerLazySingleton<BaseTiresDataSource>(()=>TiresDataImpl());

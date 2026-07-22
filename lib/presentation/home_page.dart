@@ -16,13 +16,17 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final appCubit = BlocProvider.of<AppCubit>(context);
     return BlocProvider.value(
-      value: waitingListCubit..getWaitingCustomers(),
+      value: waitingListCubit,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(80),
           child: BlocBuilder<AppCubit, AppStates>(
             builder: (context, state) {
               return BlocBuilder<WaitingListCubit, WaitingCustomerState>(
+                buildWhen: (prev, current){
+                  if(prev.isSelectionMode != current.isSelectionMode) return true;
+                  return false;
+                },
                 builder: (context, state) {
                   return AppBar(
                     title: Text(appCubit.appBarTitles[appCubit.currentIndex]),

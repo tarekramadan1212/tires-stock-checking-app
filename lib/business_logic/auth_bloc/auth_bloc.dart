@@ -63,6 +63,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     Emitter<AuthStates> emit,
   ) async {
     emit(SignInState(isInvited: event.isInvited));
+    add(GetCurrentUserDataEvent());
   }
 
   Future<void> _onSignInWithEmailAndPasswordEvent(
@@ -78,7 +79,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
       add(GetCurrentUserDataEvent());
       // We emit NOTHING on success!
       // Why? Because the authStateStream will automatically
-      // detect the login and emit the SignInState for us.
+      // recognize the login and emit the SignInState for us.
     });
   }
 
@@ -186,7 +187,6 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
       ),
       (data) {
         _userData = data;
-        print('userData: ${_userData.branchId}');
         emit(GetCurrentUserDataState(dataStatus: GetUserDataStatus.success));
       }
     );

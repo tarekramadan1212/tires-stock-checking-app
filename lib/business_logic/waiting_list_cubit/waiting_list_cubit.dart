@@ -96,6 +96,7 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
     );
   }
 
+
   Future<void> deleteSingleCustomer() async {
     emit(state.copyWith(deleteCustomerState: BlocStates.loading));
     final result = await repository.deleteWaitingCustomer(
@@ -281,12 +282,49 @@ class WaitingListCubit extends Cubit<WaitingCustomerState> {
     emit(state);
     emit(state.copyWith(getSavedBrandsState: BlocStates.loading));
     final savedBrands = await repository.getSavedBrands(key: key);
-    savedBrands.fold((failure) =>
-        emit(state.copyWith(getSavedBrandsState: BlocStates.error,
-            errorMessage: failure.message)),
-            (brands){
-          emit(state.copyWith(getSavedBrandsState: BlocStates.success,
-              savedSelectableBrands: brands));
-        });
+    savedBrands.fold(
+          (failure) =>
+          emit(
+            state.copyWith(
+              getSavedBrandsState: BlocStates.error,
+              errorMessage: failure.message,
+            ),
+          ),
+          (brands) {
+        emit(
+          state.copyWith(
+            getSavedBrandsState: BlocStates.success,
+            savedSelectableBrands: brands,
+          ),
+        );
+      },
+    );
   }
+
+  void sendWhatsAppMessage({
+    required WaitingCustomerModel customerModel,
+  }) async {
+    emit(state.copyWith(sendWhatsAppMessageState: BlocStates.loading));
+    final price = customerModel.prices.first;
+    final result = await repository.sendMessages(
+      customerModel: customerModel,
+      message: "Hello ${customerModel.customerName}! 👋\n\n"
+          "Here are the details for the tires you requested:\n"
+          "• *Size:* ${customerModel.tireSize}\n"
+          "• *Brand:* ${customerModel.tireBrand.first}\n"
+          "• *Price:* $price\n\n"
+          "Would you like us to reserve these for you?"
+          "\n\n"
+          "مرحباً ${customerModel.customerName}! 👋\n\n"
+          "إليك تفاصيل الإطارات التي طلبتها:\n"
+          "• المقاس: ${customerModel.tireSize}\n"
+          "• العلامة التجارية: ${customerModel.tireBrand.first}\n"
+          "• السعر: $price\n\n"
+          "هل ترغب في أن نقوم بحجزها لك؟",
+    );
+    result.fold((failure) =>
+        emit(state.copyWith(sendWhatsAppMessageState: BlocStates.error,
+            errorMessage: failure.message)), (unit) =>
+        emit(state.copyWith(sendWhatsAppMessageState: BlocStates.success)));
+    }
 }

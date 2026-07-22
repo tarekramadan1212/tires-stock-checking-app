@@ -5,11 +5,14 @@ import 'package:supreme/core/utilities/netwrok/failures.dart';
 import 'package:supreme/data/customers/customers_datasource/I_customers_datasource.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
 import 'package:supreme/data/customers/customers_repository/i_customers_repository.dart';
+import 'package:supreme/data/customers/customers_services/message_service/base_message_service.dart';
 
-class CustomersRepositoryImpl implements ICustomersRepo {
+import 'i_customers_services_repository.dart';
+
+class CustomersRepositoryImpl implements ICustomersRepo, ICustomersServicesRepository {
   final ICustomersDatasource datasource;
-
-  CustomersRepositoryImpl({required this.datasource});
+  final BaseMessageServices messageServices;
+  CustomersRepositoryImpl({required this.datasource, required this.messageServices});
 
   Future<Either<CustomFailure, T>> _repoHandler<T>(
     Future<T> Function() action,
@@ -114,5 +117,15 @@ class CustomersRepositoryImpl implements ICustomersRepo {
     {
       return Left(CacheFailure(e.toString()));
     }
+  }
+
+  @override
+  Future<Either<CustomFailure, Unit>> sendMessages({required WaitingCustomerModel customerModel, required String message}) async{
+   return _repoHandler(
+       () async {
+         await messageServices.sendWhatsAppMessage(customerModel: customerModel, message: message);
+         return unit;
+       }
+    );
   }
 }

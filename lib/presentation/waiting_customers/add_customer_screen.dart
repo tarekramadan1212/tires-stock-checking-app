@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:supreme/business_logic/auth_bloc/auth_bloc.dart';
 import 'package:supreme/business_logic/waiting_list_cubit/waiting_list_states.dart';
 import 'package:supreme/core/utilities/constants/app_colors.dart';
@@ -10,6 +11,7 @@ import '../../core/services/service_locator.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/custom_text_field.dart';
 import '../../core/utilities/helpers/convert_brands_into_list.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AddCustomerScreen extends StatefulWidget {
   const AddCustomerScreen({super.key, this.customer});
@@ -25,11 +27,14 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
   List<String> _selectedBrands = [];
 
-  final TextEditingController creatingNewBrandController = TextEditingController();
+  final TextEditingController creatingNewBrandController =
+      TextEditingController();
 
   final TextEditingController _customerNameController = TextEditingController();
 
   final TextEditingController _phoneController = TextEditingController();
+  String _countryCode = '+973';
+  String _countryFlag = 'BH';
 
   final TextEditingController _sizeController = TextEditingController();
 
@@ -66,6 +71,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     cubit.getSavedBrands(key: 'tireBrands');
     _customerNameController.text = widget.customer?.customerName ?? '';
     _phoneController.text = widget.customer?.phoneNumber ?? '';
+    _countryCode = widget.customer?.countryCode ?? '973';
+    _countryFlag = widget.customer?.countryFlag ?? 'BH';
+    print('Init: $_countryCode\n $_countryFlag');
     _sizeController.text = widget.customer?.tireSize ?? '';
     _brandController.text = widget.customer?.tireBrand.join(',') ?? '';
     _selectedBrands = widget.customer?.tireBrand ?? [];
@@ -91,8 +99,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     return BlocProvider.value(
       value: cubit,
       child: Scaffold(
-        appBar: AppBar(title: Text('Add New Customer')
-        ),
+        appBar: AppBar(title: Text('Add New Customer')),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 5.5, horizontal: 5),
@@ -160,7 +167,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                             vertical: 2.0,
                                           ),
                                           child: CustomTextField(
-                                            prefixIcon: const Icon(Icons.attach_money),
+                                            prefixIcon: const Icon(
+                                              Icons.attach_money,
+                                            ),
                                             keyboardType: TextInputType.number,
                                             controller: priceControllers[index],
                                             hintText: '0.00',
@@ -174,48 +183,92 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             ),
                           ),
                           BlocConsumer<WaitingListCubit, WaitingCustomerState>(
+                            listenWhen: (prev, current) => current.addPriceState != prev.addPriceState,
                             listener: (context, state) {
                               if (state.addPriceState == BlocStates.success) {
                                 showSuccessSnackBar(
                                   context,
-                                  'Successful action',
+                                  'Successful action, now you can inform the customer',
                                 );
 
-                                final navigator = Navigator.of(context);
-
-                                Future.delayed(
-                                  const Duration(milliseconds: 500),
-                                  () {
-                                    if (navigator.canPop()) {
-                                      navigator.pop();
-                                    }
-                                  },
-                                );
+                                // final navigator = Navigator.of(context);
+                                //
+                                // Future.delayed(
+                                //   const Duration(milliseconds: 500),
+                                //   () {
+                                //     if (navigator.canPop()) {
+                                //       navigator.pop();
+                                //     }
+                                //   },
+                                // );
+                              }else if(state.addPriceState == BlocStates.error){
+                                showErrorSnackBar(context, state.errorMessage!);
                               }
                             },
                             builder: (context, state) {
-                              return CustomButton(
-                                child: state.addPriceState == BlocStates.loading
-                                    ? CircularProgressIndicator()
-                                    : Text(
-                                        widget.customer!.prices.isEmpty
-                                            ? 'Add Price'
-                                            : 'Update Price ... Sure?',
-                                      ),
-                                onPressed: () {
-                                  final List<String> prices = priceControllers
-                                      .map((element) => element.text)
-                                      .toList();
-                                  cubit.addPrice(
-                                    id: widget.customer!.id!,
-                                    prices: prices
-                                        .map(
-                                          (element) =>
-                                              double.tryParse(element) ?? 0.0,
-                                        )
-                                        .toList(),
-                                  );
-                                },
+                              final prices = state.waitingCustomers.firstWhere((customer)=>
+                                customer.id == widget.customer!.id).prices;
+                              return Column(
+                                children: [
+                                  CustomButton(
+                                    child:
+                                        state.addPriceState ==
+                                            BlocStates.loading
+                                        ? CircularProgressIndicator()
+                                        : Text(
+                                            widget.customer!.prices.isEmpty
+                                                ? 'Add Price'
+                                                : 'Update Price ... Sure?',
+                                          ),
+                                    onPressed: () {
+                                      final List<String> prices =
+                                          priceControllers
+                                              .map((element) => element.text)
+                                              .toList();
+                                      cubit.addPrice(
+                                        id: widget.customer!.id!,
+                                        prices: prices
+                                            .map(
+                                              (element) =>
+                                                  double.tryParse(element) ??
+                                                  0.0,
+                                            )
+                                            .toList(),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  CustomButton(
+                                    onPressed: prices.isEmpty
+                                        ? null
+                                        : () {
+                                            cubit.sendWhatsAppMessage(
+                                              customerModel: widget.customer!,
+                                            );
+                                          },
+                                    color: Colors.green.withValues(alpha: 0.6),
+                                    child:
+                                        state.sendWhatsAppMessageState ==
+                                            BlocStates.loading
+                                        ? CircularProgressIndicator()
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                prices.isEmpty
+                                                    ? 'Add Prices To enable WhatsApp Message'
+                                                    : 'Send WhatsApp Message',
+                                              ),
+                                              SizedBox(width: 8.0),
+                                              FaIcon(FontAwesomeIcons.whatsapp),
+                                            ],
+                                          ),
+                                  ),
+                                ],
                               );
                             },
                           ),
@@ -249,16 +302,39 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  CustomTextField(
-                    prefixIcon: const Icon(Icons.phone),
+                  IntlPhoneField(
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[270],
+                      hintText: 'Phone Number',
+                      prefixIcon: const Icon(Icons.phone),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                    ),
                     validator: (value) {
-                      if (value!.isEmpty) return 'Phone number is required';
+                      if (value!.number.isEmpty) return 'Phone number is required';
                       return null;
                     },
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
-                    hintText: 'Phone Number',
                     controller: _phoneController,
+                    initialCountryCode: widget.customer?.countryFlag ?? 'US',
+                    onChanged: (phone) {
+                      print(phone.completeNumber);
+                    },
+                    onCountryChanged: (country) {
+                      print('Before: $_countryCode\n $_countryFlag');
+                      _countryCode = country.dialCode;
+                      _countryFlag = country.flag;
+                      print('After: $_countryCode\n $_countryFlag');
+
+                    },
                   ),
                   Text(
                     'Tire Size',
@@ -300,8 +376,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   ),
 
                   BlocBuilder<WaitingListCubit, WaitingCustomerState>(
-                    buildWhen: (prev, current)=>
-                      prev.addNewBrandState != current.addNewBrandState || prev.getSavedBrandsState != current.getSavedBrandsState,
+                    buildWhen: (prev, current) =>
+                        prev.addNewBrandState != current.addNewBrandState ||
+                        prev.getSavedBrandsState != current.getSavedBrandsState,
                     builder: (context, state) {
                       return StatefulBuilder(
                         builder: (context, setLocalState) {
@@ -336,13 +413,14 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             }).toList(),
                           );
                         },
-                        //TODO: add a new brand chip button to add a new brand to the list of brands
                       );
-                    }
+                    },
                   ),
                   InkWell(
                     splashColor: Colors.grey.withValues(alpha: 0.6),
-                    highlightColor: Colors.deepOrangeAccent.withValues(alpha: 0.6),
+                    highlightColor: Colors.deepOrangeAccent.withValues(
+                      alpha: 0.6,
+                    ),
                     child: FractionallySizedBox(
                       widthFactor: 0.46,
                       child: Ink(
@@ -376,28 +454,31 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                               prefixIcon: const Icon(Icons.add_business),
                               controller: creatingNewBrandController,
                               hintText: 'Enter a New Brand',
-                              validator: (value)
-                              {
-                                if(value!.isEmpty) return 'Enter a new Brand to create';
+                              validator: (value) {
+                                if (value!.isEmpty) return 'Enter a new Brand to create';
                                 return null;
                               },
                             ),
                           ),
                           actions: [
-                            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
                             TextButton(
-                              onPressed: ()
-                              {
-                                if(!_dialogFormKey.currentState!.validate()) return;
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("Cancel"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                if (!_dialogFormKey.currentState!.validate()) return;
 
                                 tireBrands.add(creatingNewBrandController.text);
-                                cubit.addNewBrand(brands: tireBrands, key: 'tireBrands');
+                                cubit.addNewBrand(
+                                  brands: tireBrands,
+                                  key: 'tireBrands',
+                                );
                                 creatingNewBrandController.clear();
                                 Navigator.pop(context);
                               },
                               child: Text('Add'),
                             ),
-
                           ],
                         ),
                       );
@@ -424,6 +505,14 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     width: double.infinity,
                     height: 58,
                     child: BlocConsumer<WaitingListCubit, WaitingCustomerState>(
+                      listenWhen: (prev, current) {
+                        if (prev.addCustomerState != current.addCustomerState ||
+                            prev.updateCustomerState !=
+                                current.updateCustomerState) {
+                          return true;
+                        }
+                        return false;
+                      },
                       listener: (context, state) {
                         if (state.addCustomerState == BlocStates.success ||
                             state.updateCustomerState == BlocStates.success) {
@@ -471,8 +560,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                         double.tryParse(controller.text) ?? 0.0,
                                   )
                                   .toList(),
+                              countryCode: _countryCode,
+                              countryFlag: _countryFlag,
                             );
-
                             if (widget.customer == null) {
                               await cubit.addNewCustomer(updatedModel);
                             } else {
@@ -487,6 +577,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                 status: widget.customer!.status,
                                 createdAt: widget.customer!.createdAt,
                                 prices: widget.customer!.prices,
+                                countryCode: widget.customer!.countryCode,
+                                countryFlag: widget.customer!.countryFlag,
                               );
                               await cubit.updateCustomerData(
                                 originalModel: originalModel,

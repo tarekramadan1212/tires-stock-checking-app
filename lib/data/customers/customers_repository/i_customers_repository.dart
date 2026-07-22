@@ -2,7 +2,9 @@ import 'package:dartz/dartz.dart';
 import 'package:supreme/core/utilities/netwrok/failures.dart';
 import 'package:supreme/data/customers/customers_models/waiting_customer_model.dart';
 
-abstract class ICustomersRepo {
+import 'i_customers_services_repository.dart';
+
+abstract class ICustomersRepo extends ICustomersServicesRepository{
   Future<Either<CustomFailure, WaitingCustomerModel>> addNewWaitingCustomer({
     required WaitingCustomerModel model,
   });
