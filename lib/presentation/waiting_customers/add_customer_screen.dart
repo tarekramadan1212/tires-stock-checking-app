@@ -41,7 +41,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   final TextEditingController _brandController = TextEditingController();
 
   final TextEditingController _notesController = TextEditingController();
-
+  final FocusNode _phoneFocusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _dialogFormKey = GlobalKey<FormState>();
 
@@ -88,6 +88,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     _phoneController.dispose();
     _brandController.dispose();
     _sizeController.dispose();
+    _phoneFocusNode.dispose();
     for (var controller in priceControllers) {
       controller.dispose();
     }
@@ -183,7 +184,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             ),
                           ),
                           BlocConsumer<WaitingListCubit, WaitingCustomerState>(
-                            listenWhen: (prev, current) => current.addPriceState != prev.addPriceState,
+                            listenWhen: (prev, current) =>
+                                current.addPriceState != prev.addPriceState,
                             listener: (context, state) {
                               if (state.addPriceState == BlocStates.success) {
                                 showSuccessSnackBar(
@@ -201,13 +203,18 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                 //     }
                                 //   },
                                 // );
-                              }else if(state.addPriceState == BlocStates.error){
+                              } else if (state.addPriceState ==
+                                  BlocStates.error) {
                                 showErrorSnackBar(context, state.errorMessage!);
                               }
                             },
                             builder: (context, state) {
-                              final prices = state.waitingCustomers.firstWhere((customer)=>
-                                customer.id == widget.customer!.id).prices;
+                              final prices = state.waitingCustomers
+                                  .firstWhere(
+                                    (customer) =>
+                                        customer.id == widget.customer!.id,
+                                  )
+                                  .prices;
                               return Column(
                                 children: [
                                   CustomButton(
@@ -242,8 +249,16 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                     onPressed: prices.isEmpty
                                         ? null
                                         : () {
+                                            final updatedModel = state
+                                                .waitingCustomers
+                                                .firstWhere(
+                                                  (c) =>
+                                                      c.id ==
+                                                      widget.customer!.id,
+                                                  orElse: ()=> widget.customer!,
+                                                );
                                             cubit.sendWhatsAppMessage(
-                                              customerModel: widget.customer!,
+                                              customerModel: updatedModel,
                                             );
                                           },
                                     color: Colors.green.withValues(alpha: 0.6),
@@ -291,6 +306,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                       return null;
                     },
                     textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_phoneFocusNode);
+                    },
                     hintText: 'Customer Name',
                     controller: _customerNameController,
                   ),
@@ -303,28 +321,30 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     ),
                   ),
                   IntlPhoneField(
+                    focusNode: _phoneFocusNode,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.grey[270],
                       hintText: 'Phone Number',
                       prefixIcon: const Icon(Icons.phone),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(13),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: const BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(13),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: const BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     validator: (value) {
-                      if (value!.number.isEmpty) return 'Phone number is required';
+                      if (value!.number.isEmpty)
+                        return 'Phone number is required';
                       return null;
                     },
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
                     controller: _phoneController,
-                    initialCountryCode: widget.customer?.countryFlag ?? 'US',
+                    initialCountryCode: widget.customer?.countryFlag ?? 'BH',
                     onChanged: (phone) {
                       print(phone.completeNumber);
                     },
@@ -333,7 +353,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                       _countryCode = country.dialCode;
                       _countryFlag = country.flag;
                       print('After: $_countryCode\n $_countryFlag');
-
                     },
                   ),
                   Text(
@@ -455,7 +474,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                               controller: creatingNewBrandController,
                               hintText: 'Enter a New Brand',
                               validator: (value) {
-                                if (value!.isEmpty) return 'Enter a new Brand to create';
+                                if (value!.isEmpty)
+                                  return 'Enter a new Brand to create';
                                 return null;
                               },
                             ),
@@ -467,7 +487,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             ),
                             TextButton(
                               onPressed: () {
-                                if (!_dialogFormKey.currentState!.validate()) return;
+                                if (!_dialogFormKey.currentState!.validate())
+                                  return;
 
                                 tireBrands.add(creatingNewBrandController.text);
                                 cubit.addNewBrand(

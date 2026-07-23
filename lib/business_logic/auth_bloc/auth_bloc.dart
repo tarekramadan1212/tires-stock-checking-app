@@ -62,8 +62,8 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
     SignedInEvent event,
     Emitter<AuthStates> emit,
   ) async {
-    emit(SignInState(isInvited: event.isInvited));
     add(GetCurrentUserDataEvent());
+    emit(SignInState(isInvited: event.isInvited));
   }
 
   Future<void> _onSignInWithEmailAndPasswordEvent(

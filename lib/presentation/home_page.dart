@@ -23,10 +23,6 @@ class HomePage extends StatelessWidget {
           child: BlocBuilder<AppCubit, AppStates>(
             builder: (context, state) {
               return BlocBuilder<WaitingListCubit, WaitingCustomerState>(
-                buildWhen: (prev, current){
-                  if(prev.isSelectionMode != current.isSelectionMode) return true;
-                  return false;
-                },
                 builder: (context, state) {
                   return AppBar(
                     title: Text(appCubit.appBarTitles[appCubit.currentIndex]),
