@@ -49,6 +49,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       style: Theme.of(context).textTheme.bodyMedium),
                     SizedBox(height: 25),
                     CustomTextField(
+                      textInputAction: TextInputAction.next,
                       validator: (value){
                         if(value == null || value.isEmpty)
                           {
@@ -90,6 +91,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ),
                     SizedBox(height: 25),
                     CustomTextField(
+                      textInputAction: TextInputAction.done,
                       validator: (value){
                         if(value == null || value.isEmpty)
                           {
